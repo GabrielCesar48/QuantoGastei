@@ -5,15 +5,46 @@
 
 {% block content %}
 <div class="container-app">
-    <!-- Header -->
+    <!-- Header Moderno -->
     <div class="app-header">
-        <h1>QuantoGastei</h1>
-        <p>Olá, <span id="user-name">Usuário</span>!</p>
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                <span class="material-symbols-outlined" style="color: var(--primary); font-size: 1.5rem;">account_balance_wallet</span>
+            </div>
+            <div>
+                <h1 style="margin: 0;">QuantoGastei</h1>
+                <p style="margin: 0;">Olá, <span id="user-name">Usuário</span>! 👋</p>
+            </div>
+        </div>
     </div>
 
     <!-- Selector de Contas -->
     <div class="contas-selector" id="contasSelector">
         <div class="loading"></div>
+    </div>
+
+    <!-- Botões de Ação Principais - DESTAQUE -->
+    <div class="action-buttons">
+        <button class="action-btn receita" onclick="abrirModal('receita')">
+            <div class="action-btn-icon">
+                <span class="material-symbols-outlined">add</span>
+            </div>
+            <span class="action-btn-text">Receita</span>
+        </button>
+
+        <button class="action-btn despesa" onclick="abrirModal('despesa')">
+            <div class="action-btn-icon">
+                <span class="material-symbols-outlined">remove</span>
+            </div>
+            <span class="action-btn-text">Despesa</span>
+        </button>
+
+        <button class="action-btn transferencia" onclick="abrirModal('transferencia')">
+            <div class="action-btn-icon">
+                <span class="material-symbols-outlined">swap_horiz</span>
+            </div>
+            <span class="action-btn-text">Transferir</span>
+        </button>
     </div>
 
     <!-- Resumo Mensal -->
@@ -43,7 +74,9 @@
     <!-- Gráfico Pizza -->
     <div class="grafico-container">
         <h3>Gastos por Categoria</h3>
-        <canvas id="chartCategoria" width="400" height="300"></canvas>
+        <div class="grafico-wrapper">
+            <canvas id="chartCategoria" width="400" height="300"></canvas>
+        </div>
     </div>
 
     <!-- Últimos Registros -->
@@ -52,19 +85,6 @@
         <div id="ultimasTransacoes">
             <div class="loading"></div>
         </div>
-    </div>
-
-    <!-- FABs -->
-    <div class="fabs-container">
-        <button class="fab fab-receita" onclick="abrirModal('receita')" title="Nova Receita">
-            <span class="material-symbols-outlined">add</span>
-        </button>
-        <button class="fab fab-despesa" onclick="abrirModal('despesa')" title="Nova Despesa">
-            <span class="material-symbols-outlined">remove</span>
-        </button>
-        <button class="fab fab-transferencia" onclick="abrirModal('transferencia')" title="Transferência">
-            <span class="material-symbols-outlined">swap_horiz</span>
-        </button>
     </div>
 
     <!-- Bottom Navigation -->
@@ -101,12 +121,12 @@
             
             <div class="form-group">
                 <label for="descricao">Descrição</label>
-                <input type="text" id="descricao" class="form-control" required>
+                <input type="text" id="descricao" class="form-control" required placeholder="Ex: Almoço no restaurante">
             </div>
 
             <div class="form-group">
                 <label for="valor">Valor</label>
-                <input type="number" id="valor" class="form-control" step="0.01" min="0" required>
+                <input type="number" id="valor" class="form-control" step="0.01" min="0" required placeholder="0,00">
             </div>
 
             <div class="form-group">
@@ -117,30 +137,30 @@
             <div class="form-group">
                 <label for="conta_origem">Conta</label>
                 <select id="conta_origem" class="form-control" required>
-                    <option value="">Selecione...</option>
+                    <option value="">Selecione uma conta</option>
                 </select>
             </div>
 
             <div class="form-group" id="grupoContaDestino" style="display: none;">
                 <label for="conta_destino">Conta Destino</label>
                 <select id="conta_destino" class="form-control">
-                    <option value="">Selecione...</option>
+                    <option value="">Selecione uma conta</option>
                 </select>
             </div>
 
             <div class="form-group" id="grupoCategoria">
                 <label for="categoria">Categoria</label>
                 <select id="categoria" class="form-control">
-                    <option value="">Selecione...</option>
+                    <option value="">Selecione uma categoria</option>
                 </select>
             </div>
 
             <div class="form-group">
                 <label for="observacoes">Observações (opcional)</label>
-                <textarea id="observacoes" class="form-control" rows="2"></textarea>
+                <textarea id="observacoes" class="form-control" rows="2" placeholder="Adicione uma nota sobre essa transação"></textarea>
             </div>
 
-            <button type="submit" class="btn btn-primary">Salvar</button>
+            <button type="submit" class="btn btn-primary">Salvar Transação</button>
         </form>
     </div>
 </div>
