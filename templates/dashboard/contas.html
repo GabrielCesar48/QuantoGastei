@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Minhas Contas - QuantoGastei{% endblock %}
+
+{% block content %}
+<div class="container-app">
+    <!-- Header -->
+    <div class="app-header">
+        <h1>Minhas Contas</h1>
+        <p>Gerencie suas contas financeiras</p>
+    </div>
+
+    <!-- Lista de Contas -->
+    <div style="padding: 20px; padding-bottom: 100px;">
+        <button class="btn btn-primary" onclick="abrirModalConta()" style="width: 100%; margin-bottom: 20px;">
+            <span class="material-symbols-outlined" style="vertical-align: middle;">add</span>
+            Nova Conta
+        </button>
+
+        <div id="listaContas">
+            <div class="loading"></div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="{% url 'home' %}" class="nav-item">
+            <span class="material-symbols-outlined">home</span>
+            <span>Início</span>
+        </a>
+        <a href="{% url 'contas' %}" class="nav-item active">
+            <span class="material-symbols-outlined">account_balance_wallet</span>
+            <span>Contas</span>
+        </a>
+        <a href="{% url 'transacoes' %}" class="nav-item">
+            <span class="material-symbols-outlined">receipt_long</span>
+            <span>Histórico</span>
+        </a>
+        <a href="#" class="nav-item" onclick="logout()">
+            <span class="material-symbols-outlined">logout</span>
+            <span>Sair</span>
+        </a>
+    </nav>
+</div>
+
+<!-- Modal Nova/Editar Conta -->
+<div id="modalConta" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modalContaTitle">Nova Conta</h2>
+            <button class="modal-close" onclick="fecharModalConta()">&times;</button>
+        </div>
+        
+        <form id="formConta">
+            <input type="hidden" id="contaId">
+            
+            <div class="form-group">
+                <label for="nome">Nome da Conta</label>
+                <input type="text" id="nome" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label for="tipo">Tipo</label>
+                <select id="tipo" class="form-control" required>
+                    <option value="dinheiro">Dinheiro</option>
+                    <option value="conta_corrente">Conta Corrente</option>
+                    <option value="poupanca">Poupança</option>
+                    <option value="cartao_credito">Cartão de Crédito</option>
+                    <option value="cartao_debito">Cartão de Débito</option>
+                    <option value="investimento">Investimento</option>
+                    <option value="outro">Outro</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="saldo_inicial">Saldo Inicial</label>
+                <input type="number" id="saldo_inicial" class="form-control" step="0.01" value="0" required>
+            </div>
+
+            <div class="form-group">
+                <label for="icone">Ícone</label>
+                <select id="icone" class="form-control" required>
+                    <option value="wallet">Carteira</option>
+                    <option value="credit_card">Cartão</option>
+                    <option value="account_balance">Banco</option>
+                    <option value="savings">Poupança</option>
+                    <option value="trending_up">Investimento</option>
+                    <option value="payments">Pagamento</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="cor">Cor</label>
+                <select id="cor" class="form-control" required>
+                    <option value="#12A454">Verde</option>
+                    <option value="#3B82F6">Azul</option>
+                    <option value="#8B5CF6">Roxo</option>
+                    <option value="#F59E0B">Laranja</option>
+                    <option value="#EF4444">Vermelho</option>
+                    <option value="#6B7280">Cinza</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Salvar</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/api.js' %}"></script>
+<script src="{% static 'js/contas.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - QuantoGastei{% endblock %}
+
+{% block content %}
+<div class="container-app">
+    <!-- Header -->
+    <div class="app-header">
+        <h1>QuantoGastei</h1>
+        <p>Olá, <span id="user-name">Usuário</span>!</p>
+    </div>
+
+    <!-- Selector de Contas -->
+    <div class="contas-selector" id="contasSelector">
+        <div class="loading"></div>
+    </div>
+
+    <!-- Resumo Mensal -->
+    <div class="resumo-mensal">
+        <div class="resumo-header">
+            <h2 class="resumo-mes" id="resumoMes">Carregando...</h2>
+        </div>
+
+        <div class="resumo-cards">
+            <div class="resumo-card receita">
+                <div class="resumo-card-label">Receitas</div>
+                <div class="resumo-card-valor" id="totalReceitas">R$ 0,00</div>
+            </div>
+
+            <div class="resumo-card despesa">
+                <div class="resumo-card-label">Despesas</div>
+                <div class="resumo-card-valor" id="totalDespesas">R$ 0,00</div>
+            </div>
+
+            <div class="resumo-card saldo">
+                <div class="resumo-card-label">Saldo do Mês</div>
+                <div class="resumo-card-valor" id="saldoMes">R$ 0,00</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráfico Pizza -->
+    <div class="grafico-container">
+        <h3>Gastos por Categoria</h3>
+        <canvas id="chartCategoria" width="400" height="300"></canvas>
+    </div>
+
+    <!-- Últimos Registros -->
+    <div class="ultimos-registros">
+        <h3>Últimos Registros</h3>
+        <div id="ultimasTransacoes">
+            <div class="loading"></div>
+        </div>
+    </div>
+
+    <!-- FABs -->
+    <div class="fabs-container">
+        <button class="fab fab-receita" onclick="abrirModal('receita')" title="Nova Receita">
+            <span class="material-symbols-outlined">add</span>
+        </button>
+        <button class="fab fab-despesa" onclick="abrirModal('despesa')" title="Nova Despesa">
+            <span class="material-symbols-outlined">remove</span>
+        </button>
+        <button class="fab fab-transferencia" onclick="abrirModal('transferencia')" title="Transferência">
+            <span class="material-symbols-outlined">swap_horiz</span>
+        </button>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="{% url 'home' %}" class="nav-item active">
+            <span class="material-symbols-outlined">home</span>
+            <span>Início</span>
+        </a>
+        <a href="{% url 'contas' %}" class="nav-item">
+            <span class="material-symbols-outlined">account_balance_wallet</span>
+            <span>Contas</span>
+        </a>
+        <a href="{% url 'transacoes' %}" class="nav-item">
+            <span class="material-symbols-outlined">receipt_long</span>
+            <span>Histórico</span>
+        </a>
+        <a href="#" class="nav-item" onclick="logout()">
+            <span class="material-symbols-outlined">logout</span>
+            <span>Sair</span>
+        </a>
+    </nav>
+</div>
+
+<!-- Modal Nova Transação -->
+<div id="modalTransacao" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modalTitle">Nova Transação</h2>
+            <button class="modal-close" onclick="fecharModal()">&times;</button>
+        </div>
+        
+        <form id="formTransacao">
+            <input type="hidden" id="tipoTransacao" name="tipo">
+            
+            <div class="form-group">
+                <label for="descricao">Descrição</label>
+                <input type="text" id="descricao" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label for="valor">Valor</label>
+                <input type="number" id="valor" class="form-control" step="0.01" min="0" required>
+            </div>
+
+            <div class="form-group">
+                <label for="data">Data</label>
+                <input type="date" id="data" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label for="conta_origem">Conta</label>
+                <select id="conta_origem" class="form-control" required>
+                    <option value="">Selecione...</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="grupoContaDestino" style="display: none;">
+                <label for="conta_destino">Conta Destino</label>
+                <select id="conta_destino" class="form-control">
+                    <option value="">Selecione...</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="grupoCategoria">
+                <label for="categoria">Categoria</label>
+                <select id="categoria" class="form-control">
+                    <option value="">Selecione...</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="observacoes">Observações (opcional)</label>
+                <textarea id="observacoes" class="form-control" rows="2"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Salvar</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="{% static 'js/api.js' %}"></script>
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}

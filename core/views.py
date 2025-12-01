@@ -4,6 +4,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import Usuario
 from .serializers import UsuarioSerializer, UsuarioCreateSerializer
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 
 class UsuarioViewSet(viewsets.ModelViewSet):
     """
@@ -44,3 +46,27 @@ class UsuarioViewSet(viewsets.ModelViewSet):
         usuario.save()
         serializer = self.get_serializer(usuario)
         return Response(serializer.data)
+    
+# Views para servir templates
+def login_view(request):
+    """Página de login."""
+    return render(request, 'auth/login.html')
+
+def registro_view(request):
+    """Página de registro."""
+    return render(request, 'auth/registro.html')
+
+@login_required
+def home_view(request):
+    """Dashboard principal."""
+    return render(request, 'dashboard/home.html')
+
+@login_required
+def contas_view(request):
+    """Gerenciar contas."""
+    return render(request, 'dashboard/contas.html')
+
+@login_required
+def transacoes_view(request):
+    """Gerenciar transações."""
+    return render(request, 'dashboard/transacoes.html')

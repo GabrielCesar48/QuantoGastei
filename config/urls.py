@@ -5,7 +5,14 @@ from django.conf.urls.static import static
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-from core.views import UsuarioViewSet
+from core.views import (
+    UsuarioViewSet,
+    login_view,
+    registro_view,
+    home_view,
+    contas_view,
+    transacoes_view
+)
 from contas.views import ContaViewSet
 from transacoes.views import CategoriaViewSet, TransacaoViewSet
 
@@ -18,6 +25,13 @@ router.register(r'transacoes', TransacaoViewSet, basename='transacao')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    
+    # Páginas HTML
+    path('', login_view, name='login'),
+    path('registro/', registro_view, name='registro'),
+    path('home/', home_view, name='home'),
+    path('contas/', contas_view, name='contas'),
+    path('transacoes/', transacoes_view, name='transacoes'),
     
     # API
     path('api/', include(router.urls)),
