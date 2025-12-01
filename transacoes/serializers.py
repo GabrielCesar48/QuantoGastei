@@ -29,25 +29,10 @@ class CategoriaSerializer(serializers.ModelSerializer):
 class TransacaoSerializer(serializers.ModelSerializer):
     """Serializer completo de Transação."""
     
-    # Para exibição (nested)
+    # Para exibição (nested) - campos extras
     conta_origem_detalhes = ContaListSerializer(source='conta_origem', read_only=True)
     conta_destino_detalhes = ContaListSerializer(source='conta_destino', read_only=True)
     categoria_detalhes = CategoriaSerializer(source='categoria', read_only=True)
-    
-    # Para envio (IDs)
-    conta_origem = serializers.PrimaryKeyRelatedField(
-        queryset=None,  # Será definido no __init__
-    )
-    conta_destino = serializers.PrimaryKeyRelatedField(
-        queryset=None,
-        required=False,
-        allow_null=True
-    )
-    categoria = serializers.PrimaryKeyRelatedField(
-        queryset=None,
-        required=False,
-        allow_null=True
-    )
     
     class Meta:
         model = Transacao
@@ -68,22 +53,25 @@ class TransacaoSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ['id', 'created_at']
     
-    def __init__(self, *args, **kwargs):
-        """Define querysets baseado no usuário logado."""
-        super().__init__(*args, **kwargs)
-        
-        request = self.context.get('request')
-        if request and hasattr(request, 'user'):
-            user = request.user
-            
-            # Filtrar contas e categorias do usuário
-            from contas.models import Conta
-            
-            self.fields['conta_origem'].queryset = Conta.objects.filter(usuario=user)
-            self.fields['conta_destino'].queryset = Conta.objects.filter(usuario=user)
-            self.fields['categoria'].queryset = Categoria.objects.filter(
-                usuario=user
-            ) | Categoria.objects.filter(padrao=True)
+    def validate_conta_origem(self, value):
+        """Valida se a conta pertence ao usuário."""
+        if value.usuario != self.context['request'].user:
+            raise serializers.ValidationError("Conta não pertence ao usuário.")
+        return value
+    
+    def validate_conta_destino(self, value):
+        """Valida se a conta destino pertence ao usuário."""
+        if value and value.usuario != self.context['request'].user:
+            raise serializers.ValidationError("Conta destino não pertence ao usuário.")
+        return value
+    
+    def validate_categoria(self, value):
+        """Valida se a categoria pertence ao usuário ou é padrão."""
+        if value:
+            request = self.context.get('request')
+            if value.usuario and value.usuario != request.user:
+                raise serializers.ValidationError("Categoria não pertence ao usuário.")
+        return value
     
     def validate(self, data):
         """Validações de negócio."""
@@ -94,19 +82,19 @@ class TransacaoSerializer(serializers.ModelSerializer):
         # Transferência precisa de conta destino
         if tipo == 'transferencia':
             if not conta_destino:
-                raise serializers.ValidationError(
-                    "Transferência precisa de conta de destino."
-                )
+                raise serializers.ValidationError({
+                    'conta_destino': "Transferência precisa de conta de destino."
+                })
             if conta_origem == conta_destino:
-                raise serializers.ValidationError(
-                    "Não pode transferir para a mesma conta."
-                )
+                raise serializers.ValidationError({
+                    'conta_destino': "Não pode transferir para a mesma conta."
+                })
         
         # Receita e Despesa não devem ter conta destino
         if tipo in ['receita', 'despesa'] and conta_destino:
-            raise serializers.ValidationError(
-                f"{tipo.capitalize()} não deve ter conta de destino."
-            )
+            raise serializers.ValidationError({
+                'conta_destino': f"{tipo.capitalize()} não deve ter conta de destino."
+            })
         
         return data
     
