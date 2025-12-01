@@ -42,8 +42,10 @@ async function carregarUsuario() {
 }
 
 async function carregarContas() {
-    const contas = await ContasAPI.listar();
-    state.contas = contas;
+    const response = await ContasAPI.listar();
+    
+    // A API pode retornar um objeto paginado ou array direto
+    state.contas = Array.isArray(response) ? response : (response.results || []);
     
     // Adicionar opção "Todas as contas"
     state.contaSelecionada = null;
@@ -52,8 +54,8 @@ async function carregarContas() {
 }
 
 async function carregarCategorias() {
-    const categorias = await CategoriasAPI.listar();
-    state.categorias = categorias;
+    const response = await CategoriasAPI.listar();
+    state.categorias = Array.isArray(response) ? response : (response.results || []);
 }
 
 async function carregarResumoMensal() {
@@ -65,11 +67,11 @@ async function carregarResumoMensal() {
 }
 
 async function carregarUltimasTransacoes() {
-    const transacoes = await TransacoesAPI.listar({
+    const response = await TransacoesAPI.listar({
         ordering: '-data,-created_at'
     });
     
-    state.transacoes = transacoes.results || transacoes;
+    state.transacoes = Array.isArray(response) ? response : (response.results || []);
     renderizarUltimasTransacoes();
 }
 
@@ -77,6 +79,11 @@ async function carregarUltimasTransacoes() {
 function renderizarContas() {
     const container = document.getElementById('contasSelector');
     if (!container) return;
+    
+    // Verificar se contas é array
+    if (!Array.isArray(state.contas)) {
+        state.contas = [];
+    }
     
     let html = `
         <div class="conta-card ${!state.contaSelecionada ? 'active' : ''}" onclick="selecionarConta(null)">
@@ -105,6 +112,10 @@ function renderizarContas() {
 }
 
 function calcularSaldoTotal() {
+    if (!Array.isArray(state.contas) || state.contas.length === 0) {
+        return Formatters.moeda(0);
+    }
+    
     const total = state.contas.reduce((acc, conta) => acc + parseFloat(conta.saldo_atual), 0);
     return Formatters.moeda(total);
 }
@@ -291,6 +302,11 @@ function preencherSelectContas() {
     const selectOrigem = document.getElementById('conta_origem');
     const selectDestino = document.getElementById('conta_destino');
     
+    // Verificar se contas é array
+    if (!Array.isArray(state.contas)) {
+        state.contas = [];
+    }
+    
     let options = '<option value="">Selecione...</option>';
     state.contas.forEach(conta => {
         options += `<option value="${conta.id}">${conta.nome}</option>`;
@@ -302,6 +318,11 @@ function preencherSelectContas() {
 
 function preencherSelectCategorias(tipo) {
     const select = document.getElementById('categoria');
+    
+    // Verificar se categorias é array
+    if (!Array.isArray(state.categorias)) {
+        state.categorias = [];
+    }
     
     const categoriasFiltradas = state.categorias.filter(c => c.tipo === tipo);
     

@@ -3,6 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Prevenir piscamento -->
+    <style>
+        body { visibility: hidden; }
+        body.loaded { visibility: visible; }
+    </style>
+
     <meta name="description" content="QuantoGastei - Descubra onde seu dinheiro vai. Controle o hoje, planeje o amanhã.">
     <title>{% block title %}QuantoGastei{% endblock %}</title>
     
@@ -29,9 +35,12 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
-    <!-- JS Customizado -->
-    <script src="{% static 'js/main.js' %}"></script>
-    
     {% block extra_js %}{% endblock %}
+    <!-- Remover classe hidden após carregar -->
+    <script>
+        window.addEventListener('load', function() {
+            document.body.classList.add('loaded');
+        });
+    </script>
 </body>
 </html>
