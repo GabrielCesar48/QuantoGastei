@@ -119,3 +119,6 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Usuario customizado
+AUTH_USER_MODEL = 'core.Usuario'
