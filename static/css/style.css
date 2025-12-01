@@ -1,0 +1,72 @@
+/* ===== VARIÁVEIS DE COR ===== */
+:root {
+    --verde-primary: #12A454;
+    --amarelo-pro: #FFC300;
+    --grafite: #1D1D1D;
+    --cinza-claro: #EAEAEA;
+    --vermelho: #E83F5B;
+    --branco: #FFFFFF;
+    
+    --font-body: 'Inter', sans-serif;
+    --font-heading: 'Poppins', sans-serif;
+}
+
+/* ===== RESET E BASE ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-body);
+    background-color: var(--cinza-claro);
+    color: var(--grafite);
+    line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    font-weight: 600;
+}
+
+/* ===== ÍCONES MATERIAL ===== */
+.material-symbols-outlined {
+    font-variation-settings:
+    'FILL' 0,
+    'wght' 300,
+    'GRAD' 0,
+    'opsz' 24;
+    vertical-align: middle;
+}
+
+/* ===== BOTÕES CUSTOMIZADOS ===== */
+.btn-primary {
+    background-color: var(--verde-primary);
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #0e8644;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(18, 164, 84, 0.3);
+}
+
+.btn-pro {
+    background: linear-gradient(135deg, var(--amarelo-pro) 0%, #FFD740 100%);
+    color: var(--grafite);
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-pro:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 195, 0, 0.4);
+}
