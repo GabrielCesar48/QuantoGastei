@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Seja PRO - QuantoGastei{% endblock %}
+
+{% block content %}
+<div class="container-app">
+    <div class="pro-header">
+        <a href="{% url 'configuracoes' %}" class="btn-back">
+            <span class="material-symbols-outlined">arrow_back</span>
+        </a>
+        <div class="pro-header-content">
+            <div class="pro-icon">
+                <span class="material-symbols-outlined">workspace_premium</span>
+            </div>
+            <h1>QuantoGastei PRO</h1>
+            <p>Leve seu controle financeiro ao próximo nível</p>
+        </div>
+    </div>
+
+    <div class="pricing-section">
+        <div class="pricing-card">
+            <div class="pricing-badge">MAIS POPULAR</div>
+            <h3>Plano Anual</h3>
+            <div class="pricing-value">
+                <span class="currency">R$</span>
+                <span class="value">99</span>
+                <span class="period">/ano</span>
+            </div>
+            <div class="pricing-economy">Economize R$ 69 por ano</div>
+            <button class="btn btn-primary btn-large" onclick="comprarPRO('anual')">
+                <span class="material-symbols-outlined">shopping_cart</span>
+                Comprar Plano Anual
+            </button>
+        </div>
+
+        <div class="pricing-card">
+            <h3>Plano Mensal</h3>
+            <div class="pricing-value">
+                <span class="currency">R$</span>
+                <span class="value">14</span>
+                <span class="period">/mês</span>
+            </div>
+            <div class="pricing-description">Cancele quando quiser</div>
+            <button class="btn btn-secondary btn-large" onclick="comprarPRO('mensal')">
+                <span class="material-symbols-outlined">shopping_cart</span>
+                Comprar Plano Mensal
+            </button>
+        </div>
+    </div>
+
+    <div class="features-section">
+        <h2>O que você ganha com o PRO</h2>
+
+        <div class="feature-item">
+            <div class="feature-icon">
+                <span class="material-symbols-outlined">cloud_sync</span>
+            </div>
+            <div class="feature-text">
+                <h4>Backup Automático na Nuvem</h4>
+                <p>Seus dados sincronizados em todos os dispositivos. Nunca perca nada.</p>
+            </div>
+        </div>
+
+        <div class="feature-item">
+            <div class="feature-icon">
+                <span class="material-symbols-outlined">flag</span>
+            </div>
+            <div class="feature-text">
+                <h4>Metas Financeiras Inteligentes</h4>
+                <p>Defina objetivos e acompanhe seu progresso com alertas personalizados.</p>
+            </div>
+        </div>
+
+        <div class="feature-item">
+            <div class="feature-icon">
+                <span class="material-symbols-outlined">picture_as_pdf</span>
+            </div>
+            <div class="feature-text">
+                <h4>Relatórios Profissionais em PDF</h4>
+                <p>Exporte relatórios completos para compartilhar ou arquivar.</p>
+            </div>
+        </div>
+
+        <div class="feature-item">
+            <div class="feature-icon">
+                <span class="material-symbols-outlined">upload_file</span>
+            </div>
+            <div class="feature-text">
+                <h4>Importação Automática OFX/CSV</h4>
+                <p>Importe extratos bancários automaticamente. Economize horas.</p>
+            </div>
+        </div>
+
+        <div class="feature-item">
+            <div class="feature-icon">
+                <span class="material-symbols-outlined">psychology</span>
+            </div>
+            <div class="feature-text">
+                <h4>IA para Previsão de Gastos</h4>
+                <p>Inteligência artificial prevê seus gastos futuros e sugere economia.</p>
+            </div>
+        </div>
+
+        <div class="feature-item">
+            <div class="feature-icon">
+                <span class="material-symbols-outlined">block</span>
+            </div>
+            <div class="feature-text">
+                <h4>Sem Propagandas</h4>
+                <p>Experiência limpa e fluida, sem interrupções.</p>
+            </div>
+        </div>
+
+        <div class="feature-item">
+            <div class="feature-icon">
+                <span class="material-symbols-outlined">family_restroom</span>
+            </div>
+            <div class="feature-text">
+                <h4>Modo Família/Empresa</h4>
+                <p>Compartilhe contas e controle financeiro com outras pessoas.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="restore-section">
+        <p>Já é PRO?</p>
+        <button class="btn-link" onclick="restaurarLicenca()">
+            <span class="material-symbols-outlined">cloud_download</span>
+            Restaurar licença com Google
+        </button>
+    </div>
+
+    <div class="terms-section">
+        <p>
+            <small>
+                Pagamento via Google Play. Renovação automática. 
+                Cancele a qualquer momento nas configurações da sua conta Google.
+            </small>
+        </p>
+    </div>
+</div>
+
+<!-- Modal de Restauração -->
+<div id="modalRestaurar" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Restaurar Licença PRO</h2>
+            <button class="modal-close" onclick="fecharModalRestaurar()">&times;</button>
+        </div>
+        
+        <div class="modal-body">
+            <p>Entre com sua conta Google para recuperar sua assinatura PRO.</p>
+            
+            <button class="btn btn-google btn-large" onclick="loginGoogleRestaurar()">
+                <span class="material-symbols-outlined">account_circle</span>
+                Entrar com Google
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Licença Não Encontrada -->
+<div id="modalNaoEncontrada" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Nenhuma Licença Encontrada</h2>
+            <button class="modal-close" onclick="fecharModalNaoEncontrada()">&times;</button>
+        </div>
+        
+        <div class="modal-body">
+            <div class="alert-icon">
+                <span class="material-symbols-outlined">info</span>
+            </div>
+            <p>Não encontramos nenhuma assinatura PRO ativa vinculada ao e-mail <strong id="emailUsuario"></strong>.</p>
+            <p>Se você acredita que isso é um erro, entre em contato com nosso suporte.</p>
+            
+            <button class="btn btn-primary" onclick="comprarNovamente()">
+                <span class="material-symbols-outlined">shopping_cart</span>
+                Comprar Assinatura PRO
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/pro.js' %}"></script>
+{% endblock %}

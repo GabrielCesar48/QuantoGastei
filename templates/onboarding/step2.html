@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Seus Dados - QuantoGastei{% endblock %}
+
+{% block content %}
+<div class="onboarding-container">
+    <div class="onboarding-content">
+        <div class="progress-bar">
+            <div class="progress-step active"></div>
+            <div class="progress-step active"></div>
+            <div class="progress-step"></div>
+        </div>
+
+        <div class="onboarding-header">
+            <h2>Vamos personalizar sua experiência</h2>
+            <p>Essas informações ficam salvas apenas no seu celular</p>
+        </div>
+
+        <div class="onboarding-form">
+            <div class="form-group">
+                <label for="telefone">Telefone (opcional)</label>
+                <input 
+                    type="tel" 
+                    id="telefone" 
+                    class="form-control" 
+                    placeholder="(00) 00000-0000"
+                    maxlength="15"
+                >
+                <small class="form-hint">
+                    Usaremos para enviar lembretes de controle financeiro
+                </small>
+            </div>
+
+            <div class="preferences-card">
+                <h3>Preferências</h3>
+                
+                <div class="toggle-container">
+                    <div class="toggle-label">
+                        <span class="material-symbols-outlined">notifications</span>
+                        <div>
+                            <div class="toggle-title">Notificações</div>
+                            <div class="toggle-description">Lembretes para registrar gastos</div>
+                        </div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="notificacoes" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+                <div class="toggle-container">
+                    <div class="toggle-label">
+                        <span class="material-symbols-outlined">dark_mode</span>
+                        <div>
+                            <div class="toggle-title">Modo Escuro</div>
+                            <div class="toggle-description">Aparência noturna</div>
+                        </div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="darkMode">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-secondary" onclick="voltarPasso()">
+                    <span class="material-symbols-outlined">arrow_back</span>
+                    Voltar
+                </button>
+                <button class="btn btn-primary" onclick="proximoPasso()">
+                    Próximo
+                    <span class="material-symbols-outlined">arrow_forward</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/onboarding.js' %}"></script>
+{% endblock %}

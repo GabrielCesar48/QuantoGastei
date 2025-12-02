@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Tutorial - QuantoGastei{% endblock %}
+
+{% block content %}
+<div class="onboarding-container">
+    <div class="onboarding-content">
+        <div class="progress-bar">
+            <div class="progress-step active"></div>
+            <div class="progress-step active"></div>
+            <div class="progress-step active"></div>
+        </div>
+
+        <div class="tutorial-slider" id="tutorialSlider">
+            <!-- Slide 1 -->
+            <div class="tutorial-slide active">
+                <div class="tutorial-icon">
+                    <span class="material-symbols-outlined">add_circle</span>
+                </div>
+                <h2>Registre seus gastos em segundos</h2>
+                <p>Adicione receitas, despesas e transferências de forma rápida e intuitiva</p>
+            </div>
+
+            <!-- Slide 2 -->
+            <div class="tutorial-slide">
+                <div class="tutorial-icon">
+                    <span class="material-symbols-outlined">insights</span>
+                </div>
+                <h2>Visualize seus gastos</h2>
+                <p>Gráficos claros mostram exatamente para onde seu dinheiro está indo</p>
+            </div>
+
+            <!-- Slide 3 -->
+            <div class="tutorial-slide">
+                <div class="tutorial-icon">
+                    <span class="material-symbols-outlined">account_balance_wallet</span>
+                </div>
+                <h2>Gerencie múltiplas contas</h2>
+                <p>Controle dinheiro, cartões, poupança e investimentos em um só lugar</p>
+            </div>
+
+            <!-- Slide 4 - PRO -->
+            <div class="tutorial-slide">
+                <div class="tutorial-icon pro">
+                    <span class="material-symbols-outlined">workspace_premium</span>
+                </div>
+                <h2>Desbloqueie recursos PRO</h2>
+                <ul class="pro-features">
+                    <li>
+                        <span class="material-symbols-outlined">cloud_sync</span>
+                        Backup automático na nuvem
+                    </li>
+                    <li>
+                        <span class="material-symbols-outlined">flag</span>
+                        Metas financeiras inteligentes
+                    </li>
+                    <li>
+                        <span class="material-symbols-outlined">picture_as_pdf</span>
+                        Relatórios em PDF
+                    </li>
+                    <li>
+                        <span class="material-symbols-outlined">block</span>
+                        Sem propagandas
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="tutorial-dots">
+            <span class="dot active" onclick="irParaSlide(0)"></span>
+            <span class="dot" onclick="irParaSlide(1)"></span>
+            <span class="dot" onclick="irParaSlide(2)"></span>
+            <span class="dot" onclick="irParaSlide(3)"></span>
+        </div>
+
+        <div class="button-group">
+            <button class="btn btn-secondary" onclick="voltarSlide()">
+                <span class="material-symbols-outlined">arrow_back</span>
+                Anterior
+            </button>
+            <button class="btn btn-primary" id="btnAvancar" onclick="avancarSlide()">
+                Próximo
+                <span class="material-symbols-outlined">arrow_forward</span>
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/onboarding.js' %}"></script>
+{% endblock %}

@@ -14,6 +14,17 @@ from core.views import (
     transacoes_view,
     configuracoes_view,
 )
+from core.oauth_views import (
+    onboarding_welcome,
+    onboarding_step2,
+    onboarding_tutorial,
+    pro_page,
+    google_oauth_redirect,
+    google_oauth_callback,
+    verify_purchase,
+    check_subscription_status,
+    google_play_webhook,
+)
 from contas.views import ContaViewSet
 from transacoes.views import CategoriaViewSet, TransacaoViewSet
 
@@ -27,18 +38,36 @@ router.register(r'transacoes', TransacaoViewSet, basename='transacao')
 urlpatterns = [
     path('admin/', admin.site.urls),
     
-    # Páginas HTML
-    path('', login_view, name='login'),
-    path('registro/', registro_view, name='registro'),
+    # ===== ONBOARDING (NOVO) =====
+    path('', onboarding_welcome, name='onboarding_welcome'),
+    path('onboarding/welcome/', onboarding_welcome, name='onboarding_welcome_alt'),
+    path('onboarding/step2/', onboarding_step2, name='onboarding_step2'),
+    path('onboarding/tutorial/', onboarding_tutorial, name='onboarding_tutorial'),
+    
+    # ===== GOOGLE OAUTH (NOVO) =====
+    path('auth/google/', google_oauth_redirect, name='google_oauth'),
+    path('auth/google/callback/', google_oauth_callback, name='google_oauth_callback'),
+    
+    # ===== PÁGINAS PRINCIPAIS =====
     path('home/', home_view, name='home'),
     path('contas/', contas_view, name='contas'),
     path('transacoes/', transacoes_view, name='transacoes'),
     path('configuracoes/', configuracoes_view, name='configuracoes'),
+    path('pro/', pro_page, name='pro'),
     
-    # API
+    # ===== AUTH LEGACY (manter para compatibilidade) =====
+    path('login/', login_view, name='login'),
+    path('registro/', registro_view, name='registro'),
+    
+    # ===== API REST =====
     path('api/', include(router.urls)),
     
-    # JWT Auth
+    # ===== API DE PAGAMENTOS (NOVO) =====
+    path('api/payment/verify/', verify_purchase, name='verify_purchase'),
+    path('api/payment/status/', check_subscription_status, name='subscription_status'),
+    path('api/payment/hooks/', google_play_webhook, name='google_play_webhook'),
+    
+    # ===== JWT AUTH =====
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]

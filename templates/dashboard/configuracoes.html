@@ -14,6 +14,23 @@
     <!-- Conteúdo -->
     <div style="padding: 20px; padding-bottom: 100px;">
         
+        <!-- ===== BOTÃO PRO DESTACADO (NOVO) ===== -->
+        <div class="pro-upgrade-banner">
+            <div class="pro-upgrade-content">
+                <div class="pro-upgrade-icon">
+                    <span class="material-symbols-outlined">workspace_premium</span>
+                </div>
+                <div class="pro-upgrade-text">
+                    <h3>Desbloqueie o PRO</h3>
+                    <p>Backup na nuvem, metas inteligentes, sem anúncios e muito mais</p>
+                </div>
+            </div>
+            <a href="{% url 'pro' %}" class="btn btn-pro">
+                Ver Planos
+                <span class="material-symbols-outlined">arrow_forward</span>
+            </a>
+        </div>
+        
         <!-- Aparência -->
         <div class="config-section">
             <div class="config-section-title">Aparência</div>
@@ -45,7 +62,7 @@
                 </div>
                 <div class="config-item-text">
                     <div class="config-item-title" id="userName">Carregando...</div>
-                    <div class="config-item-description" id="userEmail">email@exemplo.com</div>
+                    <div class="config-item-description" id="userEmail">Dados salvos localmente</div>
                 </div>
                 <span class="material-symbols-outlined config-item-arrow">chevron_right</span>
             </div>

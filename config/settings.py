@@ -128,3 +128,27 @@ AUTH_USER_MODEL = 'core.Usuario'
 LOGIN_URL = '/'
 LOGIN_REDIRECT_URL = '/home/'
 LOGOUT_REDIRECT_URL = '/'
+
+
+OOGLE_CLIENT_ID = config('GOOGLE_CLIENT_ID', default='')
+GOOGLE_CLIENT_SECRET = config('GOOGLE_CLIENT_SECRET', default='')
+
+# ===== GOOGLE PLAY BILLING =====
+GOOGLE_PLAY_SERVICE_ACCOUNT_FILE = config('GOOGLE_PLAY_SERVICE_ACCOUNT_FILE', default='')
+GOOGLE_PLAY_PACKAGE_NAME = 'com.quantogastei.app'
+
+# ===== PRODUTOS PRO =====
+PRO_PRODUCTS = {
+    'mensal': {
+        'product_id': 'com.quantogastei.pro.mensal',
+        'price': 14.90,
+        'currency': 'BRL',
+        'duration_days': 30
+    },
+    'anual': {
+        'product_id': 'com.quantogastei.pro.anual',
+        'price': 99.90,
+        'currency': 'BRL',
+        'duration_days': 365
+    }
+}

@@ -1078,3 +1078,647 @@ body.dark-mode .bottom-nav {
     background: var(--bg-card);
     border-top-color: var(--gray-300);
 }
+
+/* ========================================
+   ADICIONAR AO FINAL DO style.css EXISTENTE
+   ======================================== */
+
+/* ===== ONBOARDING ===== */
+.onboarding-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+}
+
+.onboarding-content {
+    background: var(--bg-card);
+    padding: 40px 32px;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-xl);
+    width: 100%;
+    max-width: 440px;
+}
+
+.onboarding-header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.onboarding-logo {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 16px;
+    background: var(--primary);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.onboarding-logo .material-symbols-outlined {
+    font-size: 3rem;
+    color: white;
+}
+
+.onboarding-header h1 {
+    font-size: 2rem;
+    color: var(--primary);
+    margin-bottom: 8px;
+}
+
+.onboarding-header h2 {
+    font-size: 1.5rem;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.tagline {
+    font-size: 1rem;
+    color: var(--text-secondary);
+}
+
+.onboarding-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Progress Bar */
+.progress-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 32px;
+}
+
+.progress-step {
+    flex: 1;
+    height: 4px;
+    background: var(--gray-200);
+    border-radius: var(--radius-full);
+    transition: background 0.3s ease;
+}
+
+.progress-step.active {
+    background: var(--primary);
+}
+
+/* PRO Card */
+.pro-card {
+    background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+    padding: 20px;
+    border-radius: var(--radius-lg);
+    text-align: center;
+    color: white;
+}
+
+.pro-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 6px 12px;
+    border-radius: var(--radius-full);
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.pro-card p {
+    margin-bottom: 16px;
+    font-weight: 500;
+}
+
+/* Botão Google */
+.btn-google {
+    background: white;
+    color: var(--text-primary);
+    border: none;
+    padding: 12px 24px;
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-google:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+/* Botão Large */
+.btn-large {
+    padding: 16px 24px;
+    font-size: 1.125rem;
+}
+
+/* Botão Link */
+.btn-link {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 0.875rem;
+    padding: 8px;
+    transition: color 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+.btn-link:hover {
+    color: var(--primary);
+}
+
+/* Form Hint */
+.form-hint {
+    display: block;
+    color: var(--text-secondary);
+    font-size: 0.8125rem;
+    margin-top: 4px;
+}
+
+/* Preferences Card */
+.preferences-card {
+    background: var(--gray-50);
+    padding: 20px;
+    border-radius: var(--radius-lg);
+}
+
+.preferences-card h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: var(--text-primary);
+}
+
+.toggle-title {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.toggle-description {
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+}
+
+/* Button Group */
+.button-group {
+    display: flex;
+    gap: 12px;
+}
+
+.button-group .btn {
+    flex: 1;
+}
+
+.btn-secondary {
+    background: var(--gray-200);
+    color: var(--text-primary);
+}
+
+.btn-secondary:hover {
+    background: var(--gray-300);
+}
+
+/* Tutorial Slider */
+.tutorial-slider {
+    position: relative;
+    min-height: 400px;
+    margin-bottom: 24px;
+}
+
+.tutorial-slide {
+    display: none;
+    text-align: center;
+    animation: fadeIn 0.5s ease;
+}
+
+.tutorial-slide.active {
+    display: block;
+}
+
+.tutorial-icon {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 24px;
+    background: var(--primary-light);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tutorial-icon .material-symbols-outlined {
+    font-size: 3.5rem;
+    color: var(--primary);
+}
+
+.tutorial-icon.pro {
+    background: linear-gradient(135deg, #FFC300 0%, #FFD700 100%);
+}
+
+.tutorial-icon.pro .material-symbols-outlined {
+    color: #FFF;
+}
+
+.tutorial-slide h2 {
+    font-size: 1.5rem;
+    margin-bottom: 12px;
+    color: var(--text-primary);
+}
+
+.tutorial-slide p {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+}
+
+/* PRO Features List */
+.pro-features {
+    list-style: none;
+    text-align: left;
+    padding: 0;
+}
+
+.pro-features li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.pro-features li:last-child {
+    border-bottom: none;
+}
+
+.pro-features .material-symbols-outlined {
+    font-size: 1.5rem;
+    color: #FFC300;
+    flex-shrink: 0;
+}
+
+/* Tutorial Dots */
+.tutorial-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: var(--radius-full);
+    background: var(--gray-300);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dot.active {
+    background: var(--primary);
+    width: 24px;
+}
+
+/* ===== PÁGINA PRO ===== */
+.pro-header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: white;
+    padding: 24px 20px 40px;
+    border-radius: 0 0 24px 24px;
+    position: relative;
+}
+
+.btn-back {
+    color: white;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 16px;
+    padding: 8px;
+    border-radius: var(--radius-md);
+    transition: background 0.2s ease;
+}
+
+.btn-back:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.pro-header-content {
+    text-align: center;
+}
+
+.pro-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 16px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pro-icon .material-symbols-outlined {
+    font-size: 3rem;
+    color: #FFC300;
+}
+
+.pro-header h1 {
+    font-size: 2rem;
+    margin-bottom: 8px;
+}
+
+/* Pricing Section */
+.pricing-section {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.pricing-card {
+    background: var(--bg-card);
+    border: 2px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    text-align: center;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.pricing-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary);
+}
+
+.pricing-badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--primary);
+    color: white;
+    padding: 4px 16px;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.pricing-card h3 {
+    font-size: 1.25rem;
+    margin-bottom: 16px;
+    color: var(--text-primary);
+}
+
+.pricing-value {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    margin-bottom: 8px;
+}
+
+.currency {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-right: 4px;
+}
+
+.value {
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: var(--primary);
+    line-height: 1;
+}
+
+.period {
+    font-size: 1.125rem;
+    color: var(--text-secondary);
+    margin-left: 4px;
+}
+
+.pricing-economy {
+    color: var(--success);
+    font-weight: 600;
+    font-size: 0.875rem;
+    margin-bottom: 20px;
+}
+
+.pricing-description {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin-bottom: 20px;
+}
+
+/* Features Section */
+.features-section {
+    padding: 20px;
+}
+
+.features-section h2 {
+    font-size: 1.5rem;
+    text-align: center;
+    margin-bottom: 24px;
+    color: var(--text-primary);
+}
+
+.feature-item {
+    display: flex;
+    gap: 16px;
+    padding: 20px;
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    margin-bottom: 12px;
+    border: 1px solid var(--gray-200);
+}
+
+.feature-icon {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(99, 102, 241, 0.05) 100%);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.feature-icon .material-symbols-outlined {
+    font-size: 1.75rem;
+    color: var(--primary);
+}
+
+.feature-text h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: var(--text-primary);
+}
+
+.feature-text p {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+/* Restore Section */
+.restore-section {
+    padding: 20px;
+    text-align: center;
+}
+
+.restore-section p {
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+}
+
+/* Terms */
+.terms-section {
+    padding: 20px;
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+/* Alert Icon */
+.alert-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+    background: var(--info-light);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.alert-icon .material-symbols-outlined {
+    font-size: 3rem;
+    color: var(--info);
+}
+
+/* PRO Upgrade Banner (Configurações) */
+.pro-upgrade-banner {
+    background: linear-gradient(135deg, #FFC300 0%, #FFD700 100%);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 12px rgba(255, 195, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.pro-upgrade-banner:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(255, 195, 0, 0.4);
+}
+
+.pro-upgrade-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.pro-upgrade-icon {
+    width: 56px;
+    height: 56px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.pro-upgrade-icon .material-symbols-outlined {
+    font-size: 2rem;
+    color: white;
+}
+
+.pro-upgrade-text h3 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 4px;
+}
+
+.pro-upgrade-text p {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.btn-pro {
+    background: white;
+    color: #FFC300;
+    width: 100%;
+    padding: 12px 20px;
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.btn-pro:hover {
+    background: rgba(255, 255, 255, 0.9);
+    transform: translateY(-2px);
+}
+
+/* Modal Body */
+.modal-body {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.modal-body p {
+    margin-bottom: 16px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+/* Dark Mode Adjustments */
+body.dark-mode .onboarding-content {
+    background: var(--bg-card);
+}
+
+body.dark-mode .preferences-card {
+    background: var(--gray-200);
+}
+
+body.dark-mode .pricing-card,
+body.dark-mode .feature-item {
+    background: var(--bg-card);
+    border-color: var(--gray-300);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 480px) {
+    .onboarding-content {
+        padding: 32px 24px;
+    }
+    
+    .pricing-section,
+    .features-section {
+        padding: 16px;
+    }
+    
+    .pricing-value .value {
+        font-size: 3rem;
+    }
+}
