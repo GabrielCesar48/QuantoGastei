@@ -400,3 +400,16 @@ function logout() {
 
 // Inicializar ao carregar página
 document.addEventListener('DOMContentLoaded', init);
+
+async function carregarUltimasTransacoes() {
+    // Esconder skeleton
+    const skeleton = document.querySelector('.skeleton-container');
+    if (skeleton) skeleton.style.display = 'none';
+    
+    const response = await TransacoesAPI.listar({
+        ordering: '-data,-created_at'
+    });
+    
+    state.transacoes = Array.isArray(response) ? response : (response.results || []);
+    renderizarUltimasTransacoes();
+}

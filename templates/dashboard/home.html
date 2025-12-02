@@ -83,8 +83,34 @@
     <div class="ultimos-registros">
         <h3>Últimos Registros</h3>
         <div id="ultimasTransacoes">
-            <div class="loading"></div>
+        <!-- Skeleton (mostrar enquanto carrega) -->
+        <div class="skeleton-container">
+            <div class="skeleton-item">
+                <div class="skeleton-icon"></div>
+                <div class="skeleton-text">
+                    <div class="skeleton-line skeleton-line-title"></div>
+                    <div class="skeleton-line skeleton-line-subtitle"></div>
+                </div>
+                <div class="skeleton-value"></div>
+            </div>
+            <div class="skeleton-item">
+                <div class="skeleton-icon"></div>
+                <div class="skeleton-text">
+                    <div class="skeleton-line skeleton-line-title"></div>
+                    <div class="skeleton-line skeleton-line-subtitle"></div>
+                </div>
+                <div class="skeleton-value"></div>
+            </div>
+            <div class="skeleton-item">
+                <div class="skeleton-icon"></div>
+                <div class="skeleton-text">
+                    <div class="skeleton-line skeleton-line-title"></div>
+                    <div class="skeleton-line skeleton-line-subtitle"></div>
+                </div>
+                <div class="skeleton-value"></div>
+            </div>
         </div>
+    </div>
     </div>
 
     <!-- Bottom Navigation -->
@@ -168,6 +194,6 @@
 
 {% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script src="{% static 'js/api.js' %}"></script>
-<script src="{% static 'js/dashboard.js' %}"></script>
+<script src="{% static 'js/api.js' %}" defer></script>
+<script src="{% static 'js/dashboard.js' %}" defer></script>
 {% endblock %}
