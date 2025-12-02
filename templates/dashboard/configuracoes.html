@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Configurações - QuantoGastei{% endblock %}
+
+{% block content %}
+<div class="container-app">
+    <!-- Header -->
+    <div class="app-header">
+        <h1>Configurações</h1>
+        <p>Personalize seu app</p>
+    </div>
+
+    <!-- Conteúdo -->
+    <div style="padding: 20px; padding-bottom: 100px;">
+        
+        <!-- Aparência -->
+        <div class="config-section">
+            <div class="config-section-title">Aparência</div>
+            
+            <div class="toggle-container">
+                <div class="toggle-label">
+                    <span class="material-symbols-outlined">dark_mode</span>
+                    <div>
+                        <div style="font-weight: 600;">Modo Escuro</div>
+                        <div style="font-size: 0.8125rem; color: var(--text-secondary);">
+                            Ativar tema dark
+                        </div>
+                    </div>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="darkModeToggle">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Conta -->
+        <div class="config-section">
+            <div class="config-section-title">Conta</div>
+            
+            <div class="config-item">
+                <div class="config-item-icon">
+                    <span class="material-symbols-outlined">person</span>
+                </div>
+                <div class="config-item-text">
+                    <div class="config-item-title" id="userName">Carregando...</div>
+                    <div class="config-item-description" id="userEmail">email@exemplo.com</div>
+                </div>
+                <span class="material-symbols-outlined config-item-arrow">chevron_right</span>
+            </div>
+        </div>
+
+        <!-- Dados -->
+        <div class="config-section">
+            <div class="config-section-title">Dados</div>
+            
+            <div class="config-item">
+                <div class="config-item-icon">
+                    <span class="material-symbols-outlined">download</span>
+                </div>
+                <div class="config-item-text">
+                    <div class="config-item-title">Exportar Dados</div>
+                    <div class="config-item-description">Baixar todas as transações em CSV</div>
+                </div>
+                <span class="material-symbols-outlined config-item-arrow">chevron_right</span>
+            </div>
+
+            <div class="config-item">
+                <div class="config-item-icon">
+                    <span class="material-symbols-outlined">backup</span>
+                </div>
+                <div class="config-item-text">
+                    <div class="config-item-title">Backup</div>
+                    <div class="config-item-description">Fazer backup dos dados</div>
+                </div>
+                <span class="material-symbols-outlined config-item-arrow">chevron_right</span>
+            </div>
+        </div>
+
+        <!-- Sobre -->
+        <div class="config-section">
+            <div class="config-section-title">Sobre</div>
+            
+            <div class="config-item">
+                <div class="config-item-icon">
+                    <span class="material-symbols-outlined">info</span>
+                </div>
+                <div class="config-item-text">
+                    <div class="config-item-title">Sobre o App</div>
+                    <div class="config-item-description">Versão 1.0.0</div>
+                </div>
+                <span class="material-symbols-outlined config-item-arrow">chevron_right</span>
+            </div>
+
+            <div class="config-item">
+                <div class="config-item-icon">
+                    <span class="material-symbols-outlined">help</span>
+                </div>
+                <div class="config-item-text">
+                    <div class="config-item-title">Ajuda</div>
+                    <div class="config-item-description">Central de ajuda e suporte</div>
+                </div>
+                <span class="material-symbols-outlined config-item-arrow">chevron_right</span>
+            </div>
+        </div>
+
+        <!-- Sessão -->
+        <div class="config-section">
+            <div class="config-section-title">Sessão</div>
+            
+            <div class="config-item danger" onclick="logout()">
+                <div class="config-item-icon">
+                    <span class="material-symbols-outlined">logout</span>
+                </div>
+                <div class="config-item-text">
+                    <div class="config-item-title">Sair</div>
+                    <div class="config-item-description">Desconectar da conta</div>
+                </div>
+                <span class="material-symbols-outlined config-item-arrow">chevron_right</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="{% url 'home' %}" class="nav-item">
+            <span class="material-symbols-outlined">home</span>
+            <span>Início</span>
+        </a>
+        <a href="{% url 'contas' %}" class="nav-item">
+            <span class="material-symbols-outlined">account_balance_wallet</span>
+            <span>Contas</span>
+        </a>
+        <a href="{% url 'transacoes' %}" class="nav-item">
+            <span class="material-symbols-outlined">receipt_long</span>
+            <span>Histórico</span>
+        </a>
+        <a href="{% url 'configuracoes' %}" class="nav-item active">
+            <span class="material-symbols-outlined">settings</span>
+            <span>Config</span>
+        </a>
+    </nav>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/api.js' %}"></script>
+<script src="{% static 'js/configuracoes.js' %}"></script>
+{% endblock %}

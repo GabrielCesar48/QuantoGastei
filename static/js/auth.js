@@ -1,8 +1,9 @@
-// ===== AUTENTICAÇÃO =====
+// ===== AUTENTICAÇÃO JWT =====
 
-// Verificar se já está logado
-if (TokenManager.isAuthenticated() && window.location.pathname === '/') {
-    window.location.href = '/home/';
+// Aplicar dark mode
+const darkMode = localStorage.getItem('darkMode') === 'true';
+if (darkMode) {
+    document.body.classList.add('dark-mode');
 }
 
 // Helpers de UI
@@ -68,7 +69,6 @@ if (registroForm) {
         const password = document.getElementById('password').value;
         const password_confirm = document.getElementById('password_confirm').value;
         
-        // Validar senhas
         if (password !== password_confirm) {
             showAlert('As senhas não conferem', 'danger');
             return;
@@ -97,7 +97,6 @@ if (registroForm) {
         } else {
             setLoading('btnRegistro', false);
             
-            // Formatar erros
             let errorMsg = 'Erro ao criar conta. ';
             if (result.error.username) {
                 errorMsg += 'Nome de usuário já existe. ';

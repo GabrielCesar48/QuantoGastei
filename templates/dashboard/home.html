@@ -7,15 +7,8 @@
 <div class="container-app">
     <!-- Header Moderno -->
     <div class="app-header">
-        <div style="display: flex; align-items: center; gap: 12px;">
-            <div style="width: 40px; height: 40px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                <span class="material-symbols-outlined" style="color: var(--primary); font-size: 1.5rem;">account_balance_wallet</span>
-            </div>
-            <div>
-                <h1 style="margin: 0;">QuantoGastei</h1>
-                <p style="margin: 0;">Olá, <span id="user-name">Usuário</span>! 👋</p>
-            </div>
-        </div>
+        <h1>QuantoGastei</h1>
+        <p>Olá, <span id="user-name">Usuário</span>! 👋</p>
     </div>
 
     <!-- Selector de Contas -->
@@ -51,6 +44,7 @@
     <div class="resumo-mensal">
         <div class="resumo-header">
             <h2 class="resumo-mes" id="resumoMes">Carregando...</h2>
+            <span class="contador-badge" id="contadorTransacoes">0 transações</span>
         </div>
 
         <div class="resumo-cards">
@@ -83,34 +77,34 @@
     <div class="ultimos-registros">
         <h3>Últimos Registros</h3>
         <div id="ultimasTransacoes">
-        <!-- Skeleton (mostrar enquanto carrega) -->
-        <div class="skeleton-container">
-            <div class="skeleton-item">
-                <div class="skeleton-icon"></div>
-                <div class="skeleton-text">
-                    <div class="skeleton-line skeleton-line-title"></div>
-                    <div class="skeleton-line skeleton-line-subtitle"></div>
+            <!-- Skeleton loading -->
+            <div class="skeleton-container">
+                <div class="skeleton-item">
+                    <div class="skeleton-icon"></div>
+                    <div class="skeleton-text">
+                        <div class="skeleton-line skeleton-line-title"></div>
+                        <div class="skeleton-line skeleton-line-subtitle"></div>
+                    </div>
+                    <div class="skeleton-value"></div>
                 </div>
-                <div class="skeleton-value"></div>
-            </div>
-            <div class="skeleton-item">
-                <div class="skeleton-icon"></div>
-                <div class="skeleton-text">
-                    <div class="skeleton-line skeleton-line-title"></div>
-                    <div class="skeleton-line skeleton-line-subtitle"></div>
+                <div class="skeleton-item">
+                    <div class="skeleton-icon"></div>
+                    <div class="skeleton-text">
+                        <div class="skeleton-line skeleton-line-title"></div>
+                        <div class="skeleton-line skeleton-line-subtitle"></div>
+                    </div>
+                    <div class="skeleton-value"></div>
                 </div>
-                <div class="skeleton-value"></div>
-            </div>
-            <div class="skeleton-item">
-                <div class="skeleton-icon"></div>
-                <div class="skeleton-text">
-                    <div class="skeleton-line skeleton-line-title"></div>
-                    <div class="skeleton-line skeleton-line-subtitle"></div>
+                <div class="skeleton-item">
+                    <div class="skeleton-icon"></div>
+                    <div class="skeleton-text">
+                        <div class="skeleton-line skeleton-line-title"></div>
+                        <div class="skeleton-line skeleton-line-subtitle"></div>
+                    </div>
+                    <div class="skeleton-value"></div>
                 </div>
-                <div class="skeleton-value"></div>
             </div>
         </div>
-    </div>
     </div>
 
     <!-- Bottom Navigation -->
@@ -127,11 +121,17 @@
             <span class="material-symbols-outlined">receipt_long</span>
             <span>Histórico</span>
         </a>
-        <a href="#" class="nav-item" onclick="logout()">
-            <span class="material-symbols-outlined">logout</span>
-            <span>Sair</span>
+        <a href="{% url 'configuracoes' %}" class="nav-item">
+            <span class="material-symbols-outlined">settings</span>
+            <span>Config</span>
         </a>
     </nav>
+</div>
+
+<!-- Toast Notification -->
+<div id="toast" class="toast">
+    <span class="material-symbols-outlined" id="toast-icon">check_circle</span>
+    <span id="toast-message">Sucesso!</span>
 </div>
 
 <!-- Modal Nova Transação -->
@@ -194,6 +194,7 @@
 
 {% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script src="{% static 'js/api.js' %}" defer></script>
-<script src="{% static 'js/dashboard.js' %}" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<script src="{% static 'js/api.js' %}"></script>
+<script src="{% static 'js/dashboard.js' %}"></script>
 {% endblock %}

@@ -11,7 +11,8 @@ from core.views import (
     registro_view,
     home_view,
     contas_view,
-    transacoes_view
+    transacoes_view,
+    configuracoes_view,
 )
 from contas.views import ContaViewSet
 from transacoes.views import CategoriaViewSet, TransacaoViewSet
@@ -32,6 +33,7 @@ urlpatterns = [
     path('home/', home_view, name='home'),
     path('contas/', contas_view, name='contas'),
     path('transacoes/', transacoes_view, name='transacoes'),
+    path('configuracoes/', configuracoes_view, name='configuracoes'),
     
     # API
     path('api/', include(router.urls)),

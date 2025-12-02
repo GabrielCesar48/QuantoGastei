@@ -126,8 +126,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .conta-card {
-    min-width: 140px;
-    padding: 16px;
+    min-width: 120px;  /* reduzido de 140px */
+    padding: 12px;     /* reduzido de 16px */
     border-radius: var(--radius-lg);
     background: var(--bg-card);
     border: 2px solid var(--gray-200);
@@ -149,8 +149,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .conta-icone {
-    font-size: 2rem;
-    margin-bottom: 8px;
+    font-size: 1.75rem;  /* reduzido de 2rem */
+    margin-bottom: 6px;  /* reduzido de 8px */
     color: var(--primary);
 }
 
@@ -159,14 +159,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .conta-nome {
-    font-size: 0.875rem;
+    font-size: 0.8125rem;  /* reduzido de 0.875rem */
     font-weight: 600;
     color: var(--text-primary);
-    margin-bottom: 6px;
+    margin-bottom: 4px;    /* reduzido de 6px */
 }
 
 .conta-saldo {
-    font-size: 1.125rem;
+    font-size: 1rem;      /* reduzido de 1.125rem */
     font-weight: 700;
     color: var(--text-primary);
 }
@@ -740,7 +740,341 @@ h1, h2, h3, h4, h5, h6 {
     }
 }
 
-/* ===== DARK MODE (preparado para futuro) ===== */
-@media (prefers-color-scheme: dark) {
-    /* Será implementado quando o dark mode for ativado */
+/* ===== TOAST NOTIFICATION ===== */
+.toast {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--success);
+    color: white;
+    padding: 12px 24px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    display: none;
+    z-index: 9999;
+    animation: slideUp 0.3s ease;
+}
+
+.toast.show {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.toast.error {
+    background: var(--danger);
+}
+
+.toast.info {
+    background: var(--info);
+}
+
+/* ===== SKELETON LOADING ===== */
+.skeleton-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.skeleton-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    background: var(--bg-card);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--gray-200);
+}
+
+.skeleton-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    background: linear-gradient(90deg, var(--gray-200) 25%, var(--gray-100) 50%, var(--gray-200) 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+}
+
+.skeleton-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.skeleton-line {
+    height: 12px;
+    background: linear-gradient(90deg, var(--gray-200) 25%, var(--gray-100) 50%, var(--gray-200) 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+    border-radius: 4px;
+}
+
+.skeleton-line-title {
+    width: 60%;
+    height: 16px;
+}
+
+.skeleton-line-subtitle {
+    width: 40%;
+}
+
+.skeleton-value {
+    width: 80px;
+    height: 20px;
+    background: linear-gradient(90deg, var(--gray-200) 25%, var(--gray-100) 50%, var(--gray-200) 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+    border-radius: 4px;
+}
+
+@keyframes skeleton-loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* ===== CONTADOR ===== */
+.contador-badge {
+    background: var(--gray-100);
+    color: var(--text-secondary);
+    padding: 4px 12px;
+    border-radius: var(--radius-full);
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+/* ===== ANIMAÇÕES DE ENTRADA ===== */
+.resumo-card, .transacao-item {
+    animation: fadeInUp 0.5s ease both;
+}
+
+.resumo-card:nth-child(1) { animation-delay: 0.1s; }
+.resumo-card:nth-child(2) { animation-delay: 0.2s; }
+.resumo-card:nth-child(3) { animation-delay: 0.3s; }
+
+.transacao-item:nth-child(1) { animation-delay: 0.1s; }
+.transacao-item:nth-child(2) { animation-delay: 0.15s; }
+.transacao-item:nth-child(3) { animation-delay: 0.2s; }
+.transacao-item:nth-child(4) { animation-delay: 0.25s; }
+.transacao-item:nth-child(5) { animation-delay: 0.3s; }
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== TOGGLE SWITCH ===== */
+.toggle-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    background: var(--bg-card);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--gray-200);
+    margin-bottom: 12px;
+}
+
+.toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.toggle-label .material-symbols-outlined {
+    font-size: 1.5rem;
+    color: var(--text-secondary);
+}
+
+.toggle-switch {
+    position: relative;
+    width: 52px;
+    height: 28px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--gray-300);
+    border-radius: 34px;
+    transition: 0.3s;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    border-radius: 50%;
+    transition: 0.3s;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+    background-color: var(--primary);
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+    transform: translateX(24px);
+}
+
+/* ===== SEÇÃO DE CONFIGURAÇÕES ===== */
+.config-section {
+    margin-bottom: 24px;
+}
+
+.config-section-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+    padding: 0 4px;
+}
+
+.config-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    background: var(--bg-card);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--gray-200);
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.config-item:hover {
+    background: var(--gray-50);
+    border-color: var(--gray-300);
+}
+
+body.dark-mode .config-item:hover {
+    background: var(--gray-200);
+}
+
+.config-item-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    background: var(--gray-100);
+}
+
+.config-item-icon .material-symbols-outlined {
+    font-size: 1.5rem;
+    color: var(--text-secondary);
+}
+
+.config-item-text {
+    flex: 1;
+}
+
+.config-item-title {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+}
+
+.config-item-description {
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+}
+
+.config-item-arrow {
+    color: var(--text-secondary);
+}
+
+/* Botão de sair especial */
+.config-item.danger {
+    border-color: var(--danger-light);
+}
+
+.config-item.danger:hover {
+    background: var(--danger-light);
+    border-color: var(--danger);
+}
+
+.config-item.danger .config-item-icon {
+    background: var(--danger-light);
+}
+
+.config-item.danger .config-item-icon .material-symbols-outlined {
+    color: var(--danger);
+}
+
+.config-item.danger .config-item-title {
+    color: var(--danger);
+}
+
+/* ===== DARK MODE (controlado por toggle) ===== */
+body.dark-mode {
+    --bg-primary: #1F2937;
+    --bg-secondary: #111827;
+    --bg-card: #374151;
+    
+    --text-primary: #F9FAFB;
+    --text-secondary: #D1D5DB;
+    --text-light: #9CA3AF;
+    
+    --gray-100: #374151;
+    --gray-200: #4B5563;
+    --gray-300: #6B7280;
+}
+
+body.dark-mode .app-header {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, #1e1b4b 100%);
+}
+
+body.dark-mode .action-btn {
+    background: var(--bg-card);
+    border-color: var(--gray-300);
+}
+
+body.dark-mode .transacao-item,
+body.dark-mode .conta-card,
+body.dark-mode .resumo-card,
+body.dark-mode .grafico-wrapper {
+    background: var(--bg-card);
+    border-color: var(--gray-300);
+}
+
+body.dark-mode .modal-content {
+    background: var(--bg-card);
+}
+
+body.dark-mode .form-control {
+    background: var(--bg-secondary);
+    border-color: var(--gray-300);
+    color: var(--text-primary);
+}
+
+body.dark-mode .bottom-nav {
+    background: var(--bg-card);
+    border-top-color: var(--gray-300);
 }

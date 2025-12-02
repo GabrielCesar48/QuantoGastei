@@ -20,11 +20,65 @@ let state = {
 // Chart.js instance
 let chartCategoria = null;
 
+// ===== TOAST NOTIFICATION ===== 
+function showToast(message, type = 'success') {
+    const toast = document.getElementById('toast');
+    const toastMessage = document.getElementById('toast-message');
+    const toastIcon = document.getElementById('toast-icon');
+    
+    // Ícones e classes por tipo
+    const config = {
+        success: { icon: 'check_circle', class: '' },
+        error: { icon: 'error', class: 'error' },
+        info: { icon: 'info', class: 'info' }
+    };
+    
+    const { icon, class: className } = config[type];
+    
+    // Limpar classes antigas
+    toast.className = 'toast show';
+    if (className) toast.classList.add(className);
+    
+    toastIcon.textContent = icon;
+    toastMessage.textContent = message;
+    
+    // Esconder após 3 segundos
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 3000);
+}
+
+// ===== CONFETTI CELEBRATION =====
+function celebrarMeta() {
+    const duration = 3 * 1000;
+    const end = Date.now() + duration;
+    
+    (function frame() {
+        confetti({
+            particleCount: 2,
+            angle: 60,
+            spread: 55,
+            origin: { x: 0 }
+        });
+        confetti({
+            particleCount: 2,
+            angle: 120,
+            spread: 55,
+            origin: { x: 1 }
+        });
+        
+        if (Date.now() < end) {
+            requestAnimationFrame(frame);
+        }
+    }());
+}
+
 // ===== INICIALIZAÇÃO =====
 async function init() {
     await carregarUsuario();
     await carregarContas();
     await carregarCategorias();
+    await carregarTodasTransacoes(); // Carregar todas primeiro
     await carregarResumoMensal();
     await carregarUltimasTransacoes();
 }
@@ -43,13 +97,8 @@ async function carregarUsuario() {
 
 async function carregarContas() {
     const response = await ContasAPI.listar();
-    
-    // A API pode retornar um objeto paginado ou array direto
     state.contas = Array.isArray(response) ? response : (response.results || []);
-    
-    // Adicionar opção "Todas as contas"
     state.contaSelecionada = null;
-    
     renderizarContas();
 }
 
@@ -58,20 +107,73 @@ async function carregarCategorias() {
     state.categorias = Array.isArray(response) ? response : (response.results || []);
 }
 
+// Carregar TODAS as transações para filtrar localmente
+async function carregarTodasTransacoes() {
+    const response = await TransacoesAPI.listar({
+        ordering: '-data,-created_at'
+    });
+    state.transacoes = Array.isArray(response) ? response : (response.results || []);
+}
+
 async function carregarResumoMensal() {
-    const resumo = await TransacoesAPI.resumoMensal(state.mesAtual, state.anoAtual);
-    state.resumoMensal = resumo;
+    let resumo;
     
+    // Se tem conta selecionada, filtrar apenas ela
+    if (state.contaSelecionada) {
+        const transacoesDoMes = state.transacoes.filter(t => {
+            const data = new Date(t.data);
+            return data.getMonth() + 1 === state.mesAtual && 
+                   data.getFullYear() === state.anoAtual;
+        });
+        
+        const transacoesDaConta = transacoesDoMes.filter(t => 
+            t.conta_origem === state.contaSelecionada.id || 
+            t.conta_destino === state.contaSelecionada.id
+        );
+        
+        // Calcular resumo manual para conta específica
+        const receitas = transacoesDaConta
+            .filter(t => t.tipo === 'receita' && t.conta_origem === state.contaSelecionada.id)
+            .reduce((acc, t) => acc + parseFloat(t.valor), 0);
+        
+        const despesas = transacoesDaConta
+            .filter(t => t.tipo === 'despesa' && t.conta_origem === state.contaSelecionada.id)
+            .reduce((acc, t) => acc + parseFloat(t.valor), 0);
+        
+        // Transferências recebidas somam, enviadas subtraem
+        const transferenciasRecebidas = transacoesDaConta
+            .filter(t => t.tipo === 'transferencia' && t.conta_destino === state.contaSelecionada.id)
+            .reduce((acc, t) => acc + parseFloat(t.valor), 0);
+        
+        const transferenciasEnviadas = transacoesDaConta
+            .filter(t => t.tipo === 'transferencia' && t.conta_origem === state.contaSelecionada.id)
+            .reduce((acc, t) => acc + parseFloat(t.valor), 0);
+        
+        const saldo = receitas - despesas + transferenciasRecebidas - transferenciasEnviadas;
+        
+        resumo = {
+            mes: state.mesAtual,
+            ano: state.anoAtual,
+            receitas: receitas,
+            despesas: despesas,
+            saldo: saldo,
+            gastos_por_categoria: []
+        };
+    } else {
+        // Se "Todas as contas", buscar resumo completo da API
+        resumo = await TransacoesAPI.resumoMensal(state.mesAtual, state.anoAtual);
+    }
+    
+    state.resumoMensal = resumo;
     renderizarResumoMensal();
     renderizarGrafico();
 }
 
 async function carregarUltimasTransacoes() {
-    const response = await TransacoesAPI.listar({
-        ordering: '-data,-created_at'
-    });
+    // Esconder skeleton
+    const skeleton = document.querySelector('.skeleton-container');
+    if (skeleton) skeleton.style.display = 'none';
     
-    state.transacoes = Array.isArray(response) ? response : (response.results || []);
     renderizarUltimasTransacoes();
 }
 
@@ -80,7 +182,6 @@ function renderizarContas() {
     const container = document.getElementById('contasSelector');
     if (!container) return;
     
-    // Verificar se contas é array
     if (!Array.isArray(state.contas)) {
         state.contas = [];
     }
@@ -120,9 +221,10 @@ function calcularSaldoTotal() {
     return Formatters.moeda(total);
 }
 
-function selecionarConta(contaId) {
+async function selecionarConta(contaId) {
     state.contaSelecionada = contaId ? state.contas.find(c => c.id === contaId) : null;
     renderizarContas();
+    await carregarResumoMensal();
     carregarUltimasTransacoes();
 }
 
@@ -132,9 +234,11 @@ function renderizarResumoMensal() {
     const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 
                    'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
     
+    // Atualizar mês
     document.getElementById('resumoMes').textContent = 
         `${meses[state.mesAtual - 1]} ${state.anoAtual}`;
     
+    // Atualizar valores
     document.getElementById('totalReceitas').textContent = 
         Formatters.moeda(state.resumoMensal.receitas);
     
@@ -143,6 +247,17 @@ function renderizarResumoMensal() {
     
     document.getElementById('saldoMes').textContent = 
         Formatters.moeda(state.resumoMensal.saldo);
+    
+    // Atualizar contador de transações
+    const totalTransacoes = state.contaSelecionada 
+        ? state.transacoes.filter(t => 
+            t.conta_origem === state.contaSelecionada.id || 
+            t.conta_destino === state.contaSelecionada.id
+          ).length
+        : state.transacoes.length;
+    
+    document.getElementById('contadorTransacoes').textContent = 
+        `${totalTransacoes} ${totalTransacoes === 1 ? 'transação' : 'transações'}`;
 }
 
 function renderizarGrafico() {
@@ -158,7 +273,6 @@ function renderizarGrafico() {
         return;
     }
     
-    // Destruir chart anterior
     if (chartCategoria) {
         chartCategoria.destroy();
     }
@@ -225,7 +339,6 @@ function renderizarUltimasTransacoes() {
         return;
     }
     
-    // Mostrar últimas 10
     const ultimas = transacoesFiltradas.slice(0, 10);
     
     let html = '';
@@ -263,7 +376,6 @@ function abrirModal(tipo) {
     const grupoContaDestino = document.getElementById('grupoContaDestino');
     const grupoCategoria = document.getElementById('grupoCategoria');
     
-    // Configurar título e tipo
     const titulos = {
         'receita': 'Nova Receita',
         'despesa': 'Nova Despesa',
@@ -273,7 +385,6 @@ function abrirModal(tipo) {
     titulo.textContent = titulos[tipo];
     tipoInput.value = tipo;
     
-    // Mostrar/ocultar campos
     if (tipo === 'transferencia') {
         grupoContaDestino.style.display = 'block';
         grupoCategoria.style.display = 'none';
@@ -282,11 +393,9 @@ function abrirModal(tipo) {
         grupoCategoria.style.display = 'block';
     }
     
-    // Preencher selects
     preencherSelectContas();
     preencherSelectCategorias(tipo);
     
-    // Definir data de hoje
     document.getElementById('data').value = Formatters.dataInput();
     
     modal.classList.add('show');
@@ -302,7 +411,6 @@ function preencherSelectContas() {
     const selectOrigem = document.getElementById('conta_origem');
     const selectDestino = document.getElementById('conta_destino');
     
-    // Verificar se contas é array
     if (!Array.isArray(state.contas)) {
         state.contas = [];
     }
@@ -319,7 +427,6 @@ function preencherSelectContas() {
 function preencherSelectCategorias(tipo) {
     const select = document.getElementById('categoria');
     
-    // Verificar se categorias é array
     if (!Array.isArray(state.categorias)) {
         state.categorias = [];
     }
@@ -356,7 +463,6 @@ if (formTransacao) {
             observacoes
         };
         
-        // Campos opcionais
         if (tipo === 'transferencia') {
             const conta_destino = parseInt(document.getElementById('conta_destino').value);
             if (conta_destino) {
@@ -373,12 +479,24 @@ if (formTransacao) {
         
         if (result.success) {
             fecharModal();
+            showToast('Transação criada com sucesso!', 'success');
+            
             // Recarregar dados
             await carregarContas();
+            await carregarTodasTransacoes();
             await carregarResumoMensal();
-            await carregarUltimasTransacoes();
+            carregarUltimasTransacoes();
+            
+            // Verificar se atingiu meta (exemplo: R$ 1000 de receitas)
+            if (state.resumoMensal && state.resumoMensal.receitas >= 1000) {
+                setTimeout(() => {
+                    celebrarMeta();
+                    showToast('🎉 Parabéns! Você atingiu sua meta!', 'success');
+                }, 500);
+            }
         } else {
-            alert('Erro ao criar transação: ' + JSON.stringify(result.error));
+            showToast('Erro ao criar transação', 'error');
+            console.error('Erro:', result.error);
         }
     });
 }
@@ -400,16 +518,3 @@ function logout() {
 
 // Inicializar ao carregar página
 document.addEventListener('DOMContentLoaded', init);
-
-async function carregarUltimasTransacoes() {
-    // Esconder skeleton
-    const skeleton = document.querySelector('.skeleton-container');
-    if (skeleton) skeleton.style.display = 'none';
-    
-    const response = await TransacoesAPI.listar({
-        ordering: '-data,-created_at'
-    });
-    
-    state.transacoes = Array.isArray(response) ? response : (response.results || []);
-    renderizarUltimasTransacoes();
-}

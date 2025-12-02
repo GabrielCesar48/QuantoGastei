@@ -1,10 +1,5 @@
 // ===== AUTENTICAÇÃO =====
 
-// Verificar se já está logado
-if (TokenManager.isAuthenticated() && window.location.pathname === '/') {
-    window.location.href = '/home/';
-}
-
 // Helpers de UI
 function showAlert(message, type = 'danger') {
     const alertContainer = document.getElementById('alert-container');

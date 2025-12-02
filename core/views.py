@@ -56,17 +56,22 @@ def registro_view(request):
     """Página de registro."""
     return render(request, 'auth/registro.html')
 
-@login_required
+
 def home_view(request):
     """Dashboard principal."""
     return render(request, 'dashboard/home.html')
 
-@login_required
+
 def contas_view(request):
     """Gerenciar contas."""
     return render(request, 'dashboard/contas.html')
 
-@login_required
+
 def transacoes_view(request):
     """Gerenciar transações."""
     return render(request, 'dashboard/transacoes.html')
+
+
+def configuracoes_view(request):
+    """Página de configurações."""
+    return render(request, 'dashboard/configuracoes.html')
