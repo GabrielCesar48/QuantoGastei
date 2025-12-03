@@ -1,11 +1,6 @@
 // ===== DASHBOARD =====
+// NOTA: Não verificamos autenticação aqui porque o api.js já processa os cookies!
 
-// Verificar autenticação
-if (!TokenManager.isAuthenticated()) {
-    window.location.href = '/';
-}
-
-// Estado Global
 let state = {
     usuario: null,
     contas: [],
@@ -23,10 +18,11 @@ let chartCategoria = null;
 // ===== TOAST NOTIFICATION ===== 
 function showToast(message, type = 'success') {
     const toast = document.getElementById('toast');
+    if (!toast) return;
+    
     const toastMessage = document.getElementById('toast-message');
     const toastIcon = document.getElementById('toast-icon');
     
-    // Ícones e classes por tipo
     const config = {
         success: { icon: 'check_circle', class: '' },
         error: { icon: 'error', class: 'error' },
@@ -35,50 +31,24 @@ function showToast(message, type = 'success') {
     
     const { icon, class: className } = config[type];
     
-    // Limpar classes antigas
     toast.className = 'toast show';
     if (className) toast.classList.add(className);
     
     toastIcon.textContent = icon;
     toastMessage.textContent = message;
     
-    // Esconder após 3 segundos
     setTimeout(() => {
         toast.classList.remove('show');
     }, 3000);
 }
 
-// ===== CONFETTI CELEBRATION =====
-function celebrarMeta() {
-    const duration = 3 * 1000;
-    const end = Date.now() + duration;
-    
-    (function frame() {
-        confetti({
-            particleCount: 2,
-            angle: 60,
-            spread: 55,
-            origin: { x: 0 }
-        });
-        confetti({
-            particleCount: 2,
-            angle: 120,
-            spread: 55,
-            origin: { x: 1 }
-        });
-        
-        if (Date.now() < end) {
-            requestAnimationFrame(frame);
-        }
-    }());
-}
-
 // ===== INICIALIZAÇÃO =====
 async function init() {
+    console.log('[DASHBOARD] Inicializando...');
     await carregarUsuario();
     await carregarContas();
     await carregarCategorias();
-    await carregarTodasTransacoes(); // Carregar todas primeiro
+    await carregarTodasTransacoes();
     await carregarResumoMensal();
     await carregarUltimasTransacoes();
 }
@@ -107,7 +77,6 @@ async function carregarCategorias() {
     state.categorias = Array.isArray(response) ? response : (response.results || []);
 }
 
-// Carregar TODAS as transações para filtrar localmente
 async function carregarTodasTransacoes() {
     const response = await TransacoesAPI.listar({
         ordering: '-data,-created_at'
@@ -118,7 +87,6 @@ async function carregarTodasTransacoes() {
 async function carregarResumoMensal() {
     let resumo;
     
-    // Se tem conta selecionada, filtrar apenas ela
     if (state.contaSelecionada) {
         const transacoesDoMes = state.transacoes.filter(t => {
             const data = new Date(t.data);
@@ -131,7 +99,6 @@ async function carregarResumoMensal() {
             t.conta_destino === state.contaSelecionada.id
         );
         
-        // Calcular resumo manual para conta específica
         const receitas = transacoesDaConta
             .filter(t => t.tipo === 'receita' && t.conta_origem === state.contaSelecionada.id)
             .reduce((acc, t) => acc + parseFloat(t.valor), 0);
@@ -140,7 +107,6 @@ async function carregarResumoMensal() {
             .filter(t => t.tipo === 'despesa' && t.conta_origem === state.contaSelecionada.id)
             .reduce((acc, t) => acc + parseFloat(t.valor), 0);
         
-        // Transferências recebidas somam, enviadas subtraem
         const transferenciasRecebidas = transacoesDaConta
             .filter(t => t.tipo === 'transferencia' && t.conta_destino === state.contaSelecionada.id)
             .reduce((acc, t) => acc + parseFloat(t.valor), 0);
@@ -160,7 +126,6 @@ async function carregarResumoMensal() {
             gastos_por_categoria: []
         };
     } else {
-        // Se "Todas as contas", buscar resumo completo da API
         resumo = await TransacoesAPI.resumoMensal(state.mesAtual, state.anoAtual);
     }
     
@@ -170,7 +135,6 @@ async function carregarResumoMensal() {
 }
 
 async function carregarUltimasTransacoes() {
-    // Esconder skeleton
     const skeleton = document.querySelector('.skeleton-container');
     if (skeleton) skeleton.style.display = 'none';
     
@@ -234,21 +198,26 @@ function renderizarResumoMensal() {
     const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 
                    'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
     
-    // Atualizar mês
-    document.getElementById('resumoMes').textContent = 
-        `${meses[state.mesAtual - 1]} ${state.anoAtual}`;
+    const resumoMes = document.getElementById('resumoMes');
+    if (resumoMes) {
+        resumoMes.textContent = `${meses[state.mesAtual - 1]} ${state.anoAtual}`;
+    }
     
-    // Atualizar valores
-    document.getElementById('totalReceitas').textContent = 
-        Formatters.moeda(state.resumoMensal.receitas);
+    const totalReceitas = document.getElementById('totalReceitas');
+    if (totalReceitas) {
+        totalReceitas.textContent = Formatters.moeda(state.resumoMensal.receitas);
+    }
     
-    document.getElementById('totalDespesas').textContent = 
-        Formatters.moeda(state.resumoMensal.despesas);
+    const totalDespesas = document.getElementById('totalDespesas');
+    if (totalDespesas) {
+        totalDespesas.textContent = Formatters.moeda(state.resumoMensal.despesas);
+    }
     
-    document.getElementById('saldoMes').textContent = 
-        Formatters.moeda(state.resumoMensal.saldo);
+    const saldoMes = document.getElementById('saldoMes');
+    if (saldoMes) {
+        saldoMes.textContent = Formatters.moeda(state.resumoMensal.saldo);
+    }
     
-    // Atualizar contador de transações
     const totalTransacoes = state.contaSelecionada 
         ? state.transacoes.filter(t => 
             t.conta_origem === state.contaSelecionada.id || 
@@ -256,8 +225,10 @@ function renderizarResumoMensal() {
           ).length
         : state.transacoes.length;
     
-    document.getElementById('contadorTransacoes').textContent = 
-        `${totalTransacoes} ${totalTransacoes === 1 ? 'transação' : 'transações'}`;
+    const contador = document.getElementById('contadorTransacoes');
+    if (contador) {
+        contador.textContent = `${totalTransacoes} ${totalTransacoes === 1 ? 'transação' : 'transações'}`;
+    }
 }
 
 function renderizarGrafico() {
@@ -300,9 +271,7 @@ function renderizarGrafico() {
                     position: 'bottom',
                     labels: {
                         padding: 15,
-                        font: {
-                            size: 12
-                        }
+                        font: { size: 12 }
                     }
                 },
                 tooltip: {
@@ -368,9 +337,17 @@ function renderizarUltimasTransacoes() {
     container.innerHTML = html;
 }
 
+function logout() {
+    if (confirm('Deseja realmente sair?')) {
+        AuthAPI.logout();
+    }
+}
+
 // ===== MODAL DE TRANSAÇÃO =====
 function abrirModal(tipo) {
     const modal = document.getElementById('modalTransacao');
+    if (!modal) return;
+    
     const titulo = document.getElementById('modalTitle');
     const tipoInput = document.getElementById('tipoTransacao');
     const grupoContaDestino = document.getElementById('grupoContaDestino');
@@ -403,13 +380,19 @@ function abrirModal(tipo) {
 
 function fecharModal() {
     const modal = document.getElementById('modalTransacao');
+    if (!modal) return;
+    
     modal.classList.remove('show');
-    document.getElementById('formTransacao').reset();
+    
+    const form = document.getElementById('formTransacao');
+    if (form) form.reset();
 }
 
 function preencherSelectContas() {
     const selectOrigem = document.getElementById('conta_origem');
     const selectDestino = document.getElementById('conta_destino');
+    
+    if (!selectOrigem) return;
     
     if (!Array.isArray(state.contas)) {
         state.contas = [];
@@ -421,11 +404,12 @@ function preencherSelectContas() {
     });
     
     selectOrigem.innerHTML = options;
-    selectDestino.innerHTML = options;
+    if (selectDestino) selectDestino.innerHTML = options;
 }
 
 function preencherSelectCategorias(tipo) {
     const select = document.getElementById('categoria');
+    if (!select) return;
     
     if (!Array.isArray(state.categorias)) {
         state.categorias = [];
@@ -442,79 +426,77 @@ function preencherSelectCategorias(tipo) {
 }
 
 // Submit do formulário de transação
-const formTransacao = document.getElementById('formTransacao');
-if (formTransacao) {
-    formTransacao.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const tipo = document.getElementById('tipoTransacao').value;
-        const descricao = document.getElementById('descricao').value;
-        const valor = parseFloat(document.getElementById('valor').value);
-        const data = document.getElementById('data').value;
-        const conta_origem = parseInt(document.getElementById('conta_origem').value);
-        const observacoes = document.getElementById('observacoes').value;
-        
-        const transacaoData = {
-            tipo,
-            descricao,
-            valor,
-            data,
-            conta_origem,
-            observacoes
-        };
-        
-        if (tipo === 'transferencia') {
-            const conta_destino = parseInt(document.getElementById('conta_destino').value);
-            if (conta_destino) {
-                transacaoData.conta_destino = conta_destino;
-            }
-        } else {
-            const categoria = document.getElementById('categoria').value;
-            if (categoria) {
-                transacaoData.categoria = parseInt(categoria);
-            }
-        }
-        
-        const result = await TransacoesAPI.criar(transacaoData);
-        
-        if (result.success) {
-            fecharModal();
-            showToast('Transação criada com sucesso!', 'success');
+document.addEventListener('DOMContentLoaded', function() {
+    const formTransacao = document.getElementById('formTransacao');
+    
+    if (formTransacao) {
+        formTransacao.addEventListener('submit', async (e) => {
+            e.preventDefault();
             
-            // Recarregar dados
-            await carregarContas();
-            await carregarTodasTransacoes();
-            await carregarResumoMensal();
-            carregarUltimasTransacoes();
+            const tipo = document.getElementById('tipoTransacao').value;
+            const descricao = document.getElementById('descricao').value;
+            const valor = parseFloat(document.getElementById('valor').value);
+            const data = document.getElementById('data').value;
+            const conta_origem = parseInt(document.getElementById('conta_origem').value);
+            const observacoes = document.getElementById('observacoes')?.value || '';
             
-            // Verificar se atingiu meta (exemplo: R$ 1000 de receitas)
-            if (state.resumoMensal && state.resumoMensal.receitas >= 1000) {
-                setTimeout(() => {
-                    celebrarMeta();
-                    showToast('🎉 Parabéns! Você atingiu sua meta!', 'success');
-                }, 500);
+            if (!conta_origem) {
+                showToast('Selecione uma conta', 'error');
+                return;
             }
-        } else {
-            showToast('Erro ao criar transação', 'error');
-            console.error('Erro:', result.error);
-        }
-    });
-}
-
-// Fechar modal ao clicar fora
-window.onclick = function(event) {
+            
+            const transacaoData = {
+                tipo,
+                descricao,
+                valor,
+                data,
+                conta_origem,
+                observacoes
+            };
+            
+            if (tipo === 'transferencia') {
+                const conta_destino = parseInt(document.getElementById('conta_destino').value);
+                if (conta_destino) {
+                    transacaoData.conta_destino = conta_destino;
+                } else {
+                    showToast('Selecione a conta de destino', 'error');
+                    return;
+                }
+            } else {
+                const categoria = document.getElementById('categoria')?.value;
+                if (categoria) {
+                    transacaoData.categoria = parseInt(categoria);
+                }
+            }
+            
+            const result = await TransacoesAPI.criar(transacaoData);
+            
+            if (result.success) {
+                fecharModal();
+                showToast('Transação criada com sucesso!', 'success');
+                
+                // Recarregar dados
+                await carregarContas();
+                await carregarTodasTransacoes();
+                await carregarResumoMensal();
+                carregarUltimasTransacoes();
+            } else {
+                showToast('Erro ao criar transação', 'error');
+                console.error('Erro:', result.error);
+            }
+        });
+    }
+    
+    // Fechar modal ao clicar fora
     const modal = document.getElementById('modalTransacao');
-    if (event.target === modal) {
-        fecharModal();
+    if (modal) {
+        window.onclick = function(event) {
+            if (event.target === modal) {
+                fecharModal();
+            }
+        }
     }
-}
-
-// Logout
-function logout() {
-    if (confirm('Deseja realmente sair?')) {
-        AuthAPI.logout();
-    }
-}
+});
 
 // Inicializar ao carregar página
 document.addEventListener('DOMContentLoaded', init);

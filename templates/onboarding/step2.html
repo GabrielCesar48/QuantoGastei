@@ -13,11 +13,38 @@
         </div>
 
         <div class="onboarding-header">
-            <h2>Vamos personalizar sua experiência</h2>
-            <p>Essas informações ficam salvas apenas no seu celular</p>
+            <h2>Complete seu cadastro</h2>
+            <p>Preencha seus dados para começar</p>
         </div>
 
-        <div class="onboarding-form">
+        <div id="alert-container"></div>
+
+        <form id="formOnboarding" class="onboarding-form">
+            <div class="form-group">
+                <label for="nome">Nome Completo</label>
+                <input 
+                    type="text" 
+                    id="nome" 
+                    class="form-control" 
+                    placeholder="Seu nome completo"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="email">E-mail</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    class="form-control" 
+                    placeholder="seu@email.com"
+                    required
+                >
+                <small class="form-hint">
+                    Usaremos para recuperar sua conta se necessário
+                </small>
+            </div>
+
             <div class="form-group">
                 <label for="telefone">Telefone (opcional)</label>
                 <input 
@@ -28,7 +55,7 @@
                     maxlength="15"
                 >
                 <small class="form-hint">
-                    Usaremos para enviar lembretes de controle financeiro
+                    Para enviar lembretes de controle financeiro
                 </small>
             </div>
 
@@ -65,20 +92,254 @@
             </div>
 
             <div class="button-group">
-                <button class="btn btn-secondary" onclick="voltarPasso()">
+                <button type="button" class="btn btn-secondary" onclick="voltarPasso()">
                     <span class="material-symbols-outlined">arrow_back</span>
                     Voltar
                 </button>
-                <button class="btn btn-primary" onclick="proximoPasso()">
+                <button type="submit" class="btn btn-primary" id="btnSalvar">
                     Próximo
                     <span class="material-symbols-outlined">arrow_forward</span>
                 </button>
             </div>
-        </div>
+        </form>
     </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
+<script src="{% static 'js/api.js' %}"></script>
+<script>
+// ===== STEP 2 - CADASTRO COMPLETO =====
+
+// Aplicar dark mode salvo
+const savedDarkMode = localStorage.getItem('darkMode') === 'true';
+if (savedDarkMode) {
+    document.body.classList.add('dark-mode');
+    document.getElementById('darkMode').checked = true;
+}
+
+// Carregar dados do sessionStorage (veio da welcome)
+document.addEventListener('DOMContentLoaded', function() {
+    const tempData = sessionStorage.getItem('onboardingData');
+    
+    if (tempData) {
+        const data = JSON.parse(tempData);
+        if (data.first_name) {
+            document.getElementById('nome').value = data.first_name;
+        }
+    }
+    
+    // Se veio do Google, preencher dados
+    const googleName = "{{ google_name|escapejs }}";
+    const googleEmail = "{{ google_email|escapejs }}";
+    const jwtAccess = "{{ request.session.jwt_access|escapejs }}";
+    const jwtRefresh = "{{ request.session.jwt_refresh|escapejs }}";
+    
+    if (googleName && googleEmail) {
+        document.getElementById('nome').value = googleName;
+        document.getElementById('email').value = googleEmail;
+        
+        if (jwtAccess && jwtRefresh) {
+            localStorage.setItem('access_token', jwtAccess);
+            localStorage.setItem('refresh_token', jwtRefresh);
+        }
+    }
+});
+
+// Máscara de telefone
+const telefoneInput = document.getElementById('telefone');
+telefoneInput.addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\D/g, '');
+    
+    if (value.length <= 11) {
+        if (value.length <= 2) {
+            value = value.replace(/^(\d{0,2})/, '($1');
+        } else if (value.length <= 6) {
+            value = value.replace(/^(\d{2})(\d{0,4})/, '($1) $2');
+        } else if (value.length <= 10) {
+            value = value.replace(/^(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+        } else {
+            value = value.replace(/^(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3');
+        }
+    }
+    
+    e.target.value = value;
+});
+
+// Toggle de dark mode - ativar IMEDIATAMENTE
+const darkModeToggle = document.getElementById('darkMode');
+darkModeToggle.addEventListener('change', function() {
+    const isDark = this.checked;
+    
+    if (isDark) {
+        document.body.classList.add('dark-mode');
+        localStorage.setItem('darkMode', 'true');
+        console.log('[DARK MODE] ✅ Modo escuro ATIVADO');
+    } else {
+        document.body.classList.remove('dark-mode');
+        localStorage.setItem('darkMode', 'false');
+        console.log('[DARK MODE] ❌ Modo escuro DESATIVADO');
+    }
+});
+
+// Voltar para step anterior
+function voltarPasso() {
+    window.location.href = '/onboarding/welcome/';
+}
+
+// Função para mostrar alertas
+function showAlert(message, type = 'danger') {
+    const alertContainer = document.getElementById('alert-container');
+    alertContainer.innerHTML = `
+        <div class="alert alert-${type}" style="margin-bottom: 20px;">
+            ${message}
+        </div>
+    `;
+    
+    setTimeout(() => {
+        alertContainer.innerHTML = '';
+    }, 5000);
+}
+
+// Função para desabilitar botão durante processamento
+function setLoading(loading) {
+    const btn = document.getElementById('btnSalvar');
+    if (loading) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="loading"></span>';
+    } else {
+        btn.disabled = false;
+        btn.innerHTML = 'Próximo <span class="material-symbols-outlined">arrow_forward</span>';
+    }
+}
+
+// Submit do formulário
+document.getElementById('formOnboarding').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const nome = document.getElementById('nome').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const telefone = document.getElementById('telefone').value.replace(/\D/g, '');
+    const darkMode = document.getElementById('darkMode').checked;
+    const notificacoes = document.getElementById('notificacoes').checked;
+    
+    // Validações básicas
+    if (!nome) {
+        showAlert('Por favor, preencha seu nome completo');
+        return;
+    }
+    
+    if (!email) {
+        showAlert('Por favor, preencha seu e-mail');
+        return;
+    }
+    
+    console.log('[ONBOARDING] 📝 Verificando se email já existe...');
+    setLoading(true);
+    
+    try {
+        // Verificar se email já existe no sistema
+        const checkResponse = await fetch(`/api/usuarios/?email=${encodeURIComponent(email)}`);
+        
+        if (checkResponse.ok) {
+            const usuarios = await checkResponse.json();
+            
+            // Se encontrou usuário com este email
+            if (usuarios.results && usuarios.results.length > 0) {
+                console.log('[ONBOARDING] ✅ Email já cadastrado - fazendo login...');
+                
+                showAlert('Este e-mail já está cadastrado! Redirecionando...', 'success');
+                
+                // Fazer login automático (criar conta temporária se necessário)
+                // Na verdade, como já tem email, deve ir para tela de login
+                setTimeout(() => {
+                    window.location.href = '/login/?email=' + encodeURIComponent(email);
+                }, 2000);
+                
+                return;
+            }
+        }
+        
+        console.log('[ONBOARDING] ⚠️  Email novo - criando conta...');
+        
+        // Email não existe - criar novo usuário
+        const username = email.split('@')[0] + Date.now().toString().slice(-4);
+        const password = 'temp_' + Math.random().toString(36).slice(-8);
+        
+        const userData = {
+            username: username,
+            email: email,
+            first_name: nome,
+            password: password,
+            password_confirm: password
+        };
+        
+        const registerResponse = await fetch('/api/usuarios/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(userData)
+        });
+        
+        if (!registerResponse.ok) {
+            const error = await registerResponse.json();
+            console.error('[ONBOARDING] ❌ Erro ao criar usuário:', error);
+            showAlert('Erro ao criar conta. Tente novamente.');
+            setLoading(false);
+            return;
+        }
+        
+        const usuario = await registerResponse.json();
+        console.log('[ONBOARDING] ✅ Usuário criado:', usuario.id);
+        
+        // Fazer login com as credenciais
+        const loginResponse = await fetch('/api/token/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: username,
+                password: password
+            })
+        });
+        
+        if (!loginResponse.ok) {
+            showAlert('Erro ao fazer login. Tente novamente.');
+            setLoading(false);
+            return;
+        }
+        
+        const tokens = await loginResponse.json();
+        localStorage.setItem('access_token', tokens.access);
+        localStorage.setItem('refresh_token', tokens.refresh);
+        
+        console.log('[ONBOARDING] ✅ Login realizado com sucesso!');
+        
+        // Salvar preferências
+        localStorage.setItem('darkMode', darkMode);
+        localStorage.setItem('notificacoesAtivas', notificacoes);
+        
+        // Salvar telefone se fornecido
+        if (telefone && telefone.length >= 10) {
+            // TODO: Atualizar perfil do usuário com telefone
+            console.log('[ONBOARDING] 📱 Telefone:', telefone);
+        }
+        
+        showAlert('Conta criada com sucesso! Redirecionando...', 'success');
+        
+        // Ir para tutorial
+        setTimeout(() => {
+            window.location.href = '/onboarding/tutorial/';
+        }, 1500);
+        
+    } catch (error) {
+        console.error('[ONBOARDING] ❌ Erro:', error);
+        showAlert('Erro ao processar cadastro. Tente novamente.');
+        setLoading(false);
+    }
+});
+</script>
 <script src="{% static 'js/onboarding.js' %}"></script>
 {% endblock %}

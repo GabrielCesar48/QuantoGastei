@@ -1,0 +1,175 @@
+/* ===== TEMA PRO AMARELO DOURADO ===== */
+
+/* PRO Card no Onboarding - Amarelo Dourado */
+.pro-card {
+    background: linear-gradient(135deg, #FFC300 0%, #FFD700 100%);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    text-align: center;
+    color: white;
+    box-shadow: 0 4px 12px rgba(255, 195, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.pro-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(255, 195, 0, 0.4);
+}
+
+.pro-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(255, 255, 255, 0.3);
+    padding: 6px 12px;
+    border-radius: var(--radius-full);
+    font-size: 0.875rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: white;
+}
+
+.pro-card p {
+    margin-bottom: 16px;
+    font-weight: 500;
+    color: white;
+}
+
+/* PRO Upgrade Banner (Configurações) - Amarelo Dourado */
+.pro-upgrade-banner {
+    background: linear-gradient(135deg, #FFC300 0%, #FFD700 100%);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 12px rgba(255, 195, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.pro-upgrade-banner:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(255, 195, 0, 0.4);
+}
+
+.pro-upgrade-icon {
+    width: 56px;
+    height: 56px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.pro-upgrade-icon .material-symbols-outlined {
+    font-size: 2rem;
+    color: white;
+}
+
+.pro-upgrade-text h3 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 4px;
+}
+
+.pro-upgrade-text p {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.95);
+}
+
+.btn-pro {
+    background: white;
+    color: #FFC300;
+    width: 100%;
+    padding: 12px 20px;
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-pro:hover {
+    background: rgba(255, 255, 255, 0.9);
+    transform: translateY(-2px);
+}
+
+/* PRO Header (Página PRO) */
+.pro-header {
+    background: linear-gradient(135deg, #FFC300 0%, #FFD700 100%);
+    color: white;
+    padding: 24px 20px 40px;
+    border-radius: 0 0 24px 24px;
+    position: relative;
+}
+
+.pro-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 16px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pro-icon .material-symbols-outlined {
+    font-size: 3rem;
+    color: white;
+}
+
+/* Pricing Badge */
+.pricing-badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #FFC300;
+    color: white;
+    padding: 4px 16px;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 8px rgba(255, 195, 0, 0.3);
+}
+
+/* Tutorial PRO Icon */
+.tutorial-icon.pro {
+    background: linear-gradient(135deg, #FFC300 0%, #FFD700 100%);
+}
+
+.tutorial-icon.pro .material-symbols-outlined {
+    color: #FFF;
+}
+
+/* PRO Features com ícone dourado */
+.pro-features .material-symbols-outlined {
+    font-size: 1.5rem;
+    color: #FFC300;
+    flex-shrink: 0;
+}
+
+/* Alert Icon Info com tema amarelo */
+.alert-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+    background: rgba(255, 195, 0, 0.1);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.alert-icon .material-symbols-outlined {
+    font-size: 3rem;
+    color: #FFC300;
+}

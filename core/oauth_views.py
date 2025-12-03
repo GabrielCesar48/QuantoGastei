@@ -6,6 +6,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
+from rest_framework_simplejwt.tokens import RefreshToken
 import requests
 from datetime import datetime, timedelta
 from core.models import Usuario
@@ -17,7 +18,19 @@ def onboarding_welcome(request):
     return render(request, 'onboarding/welcome.html')
 
 def onboarding_step2(request):
-    return render(request, 'onboarding/step2.html')
+    # Passar dados do Google se existirem na session
+    context = {
+        'google_name': request.session.get('google_name', ''),
+        'google_email': request.session.get('google_email', '')
+    }
+    
+    # Limpar session após ler
+    if 'google_name' in request.session:
+        del request.session['google_name']
+    if 'google_email' in request.session:
+        del request.session['google_email']
+    
+    return render(request, 'onboarding/step2.html', context)
 
 def onboarding_tutorial(request):
     return render(request, 'onboarding/tutorial.html')
@@ -32,11 +45,10 @@ def pro_page(request):
 def google_oauth_redirect(request):
     action = request.GET.get('action', 'login')
     
-    # CORRIGIDO: Verificar se existe e dar erro claro
     client_id = settings.GOOGLE_CLIENT_ID
     client_secret = settings.GOOGLE_CLIENT_SECRET
     
-    # DEBUG: Verificar se está vazio
+    # Verificar configuração
     if not client_id or not client_secret:
         return HttpResponse(f"""
             <h1>❌ Erro de Configuração OAuth</h1>
@@ -51,9 +63,6 @@ def google_oauth_redirect(request):
                     GOOGLE_CLIENT_SECRET=seu-secret-aqui</code>
                 </li>
                 <li>Reinicie o servidor Django</li>
-                <li>Se não funcionar, adicione direto no <code>settings.py</code>:<br>
-                    <code>GOOGLE_CLIENT_ID = 'seu-id-aqui'</code>
-                </li>
             </ol>
             <p><a href="/">← Voltar</a></p>
         """, status=500)
@@ -115,6 +124,19 @@ def google_oauth_callback(request):
         
         email = user_data.get('email')
         name = user_data.get('given_name', '')
+        full_name = user_data.get('name', name)
+        
+        # DEBUG: Log para verificar fluxo
+        print(f"[GOOGLE AUTH] Email: {email}, Action: {action}")
+        
+        # SEMPRE verificar se usuário existe primeiro
+        usuario_existente = Usuario.objects.filter(email=email).first()
+        
+        # DEBUG: Verificar se encontrou usuário
+        if usuario_existente:
+            print(f"[GOOGLE AUTH] ✅ Usuário EXISTENTE encontrado: {usuario_existente.username} (ID: {usuario_existente.id})")
+        else:
+            print(f"[GOOGLE AUTH] ⚠️  Usuário NOVO - será criado")
         
         if action == 'restore':
             assinatura = Assinatura.objects.filter(
@@ -132,18 +154,88 @@ def google_oauth_callback(request):
                 redirect_url = f"/pro/?action=restore&token={access_token}&email={email}&has_pro=false"
                 return redirect(redirect_url)
         
+        elif action == 'onboarding' or action == 'login':
+            # SE USUÁRIO JÁ EXISTE - fazer login direto e ir para home
+            if usuario_existente:
+                print(f"[GOOGLE AUTH] 🔄 Fazendo login do usuário existente...")
+                
+                login(request, usuario_existente, backend='django.contrib.auth.backends.ModelBackend')
+                
+                print(f"[GOOGLE AUTH] ✅ Login feito com sucesso")
+                
+                # Gerar JWT tokens
+                refresh = RefreshToken.for_user(usuario_existente)
+                
+                print(f"[GOOGLE AUTH] 🔑 JWT tokens gerados")
+                
+                # Salvar tokens nos cookies
+                response = redirect('/home/')
+                response.set_cookie('jwt_access', str(refresh.access_token), httponly=False, max_age=3600)
+                response.set_cookie('jwt_refresh', str(refresh), httponly=False, max_age=604800)
+                response.set_cookie('onboardingComplete', 'true', httponly=False, max_age=31536000)
+                
+                print(f"[GOOGLE AUTH] 🍪 Cookies configurados:")
+                print(f"  - jwt_access: configurado")
+                print(f"  - jwt_refresh: configurado")
+                print(f"  - onboardingComplete: true")
+                print(f"[GOOGLE AUTH] 🚀 Redirecionando para /home/")
+                
+                return response
+            else:
+                # USUÁRIO NOVO - criar e ir para step2
+                usuario = Usuario.objects.create(
+                    email=email,
+                    username=email.split('@')[0] + str(Usuario.objects.count()),
+                    first_name=name
+                )
+                
+                # Fazer login
+                login(request, usuario, backend='django.contrib.auth.backends.ModelBackend')
+                
+                # Gerar JWT tokens
+                refresh = RefreshToken.for_user(usuario)
+                
+                # Salvar dados na session para o JavaScript ler
+                request.session['google_name'] = full_name
+                request.session['google_email'] = email
+                request.session['jwt_access'] = str(refresh.access_token)
+                request.session['jwt_refresh'] = str(refresh)
+                
+                # Redirecionar para step2 (precisa completar telefone)
+                return redirect('/onboarding/step2/')
+        
         else:
-            usuario, created = Usuario.objects.get_or_create(
-                email=email,
-                defaults={
-                    'username': email.split('@')[0],
-                    'first_name': name
-                }
-            )
-            
-            login(request, usuario, backend='django.contrib.auth.backends.ModelBackend')
-            
-            return redirect('/home/')
+            # Fallback: qualquer outro action ou sem action
+            # Também verifica se usuário existe
+            if usuario_existente:
+                # Usuário existe - login direto
+                login(request, usuario_existente, backend='django.contrib.auth.backends.ModelBackend')
+                
+                # Gerar JWT tokens
+                refresh = RefreshToken.for_user(usuario_existente)
+                
+                # Salvar tokens nos cookies
+                response = redirect('/home/')
+                response.set_cookie('jwt_access', str(refresh.access_token), httponly=False, max_age=3600)
+                response.set_cookie('jwt_refresh', str(refresh), httponly=False, max_age=604800)
+                
+                # IMPORTANTE: Marcar onboarding como completo
+                response.set_cookie('onboardingComplete', 'true', httponly=False, max_age=31536000)
+                
+                print(f"[GOOGLE AUTH] ✅ Fallback - Login direto para home")
+                
+                return response
+            else:
+                # Usuário novo - criar
+                usuario = Usuario.objects.create(
+                    email=email,
+                    username=email.split('@')[0] + str(Usuario.objects.count()),
+                    first_name=name
+                )
+                
+                login(request, usuario, backend='django.contrib.auth.backends.ModelBackend')
+                
+                return redirect('/home/')
     
     except Exception as e:
         print(f"Erro no OAuth callback: {e}")

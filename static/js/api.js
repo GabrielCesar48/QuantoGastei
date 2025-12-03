@@ -2,6 +2,30 @@
 
 const API_BASE_URL = '/api';
 
+// Função para ler cookies
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return null;
+}
+
+// IMPORTANTE: Processar cookies ANTES de qualquer verificação
+(function processarCookiesAPI() {
+    const jwtAccess = getCookie('jwt_access');
+    const jwtRefresh = getCookie('jwt_refresh');
+    
+    if (jwtAccess && jwtRefresh) {
+        console.log('[API] ✅ Copiando tokens do cookie para localStorage');
+        localStorage.setItem('access_token', jwtAccess);
+        localStorage.setItem('refresh_token', jwtRefresh);
+        
+        // Limpar cookies
+        document.cookie = 'jwt_access=; Max-Age=0; path=/';
+        document.cookie = 'jwt_refresh=; Max-Age=0; path=/';
+    }
+})();
+
 // Gerenciamento de Token
 const TokenManager = {
     setTokens(access, refresh) {
