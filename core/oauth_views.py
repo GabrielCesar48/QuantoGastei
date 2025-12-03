@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.conf import settings
 from django.contrib.auth import login
+from django.http import HttpResponse
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -31,7 +32,32 @@ def pro_page(request):
 def google_oauth_redirect(request):
     action = request.GET.get('action', 'login')
     
-    client_id = getattr(settings, 'GOOGLE_CLIENT_ID', '')
+    # CORRIGIDO: Verificar se existe e dar erro claro
+    client_id = settings.GOOGLE_CLIENT_ID
+    client_secret = settings.GOOGLE_CLIENT_SECRET
+    
+    # DEBUG: Verificar se está vazio
+    if not client_id or not client_secret:
+        return HttpResponse(f"""
+            <h1>❌ Erro de Configuração OAuth</h1>
+            <p><strong>GOOGLE_CLIENT_ID está vazio:</strong> {bool(client_id)}</p>
+            <p><strong>GOOGLE_CLIENT_SECRET está vazio:</strong> {bool(client_secret)}</p>
+            <hr>
+            <h3>Como corrigir:</h3>
+            <ol>
+                <li>Verifique se o arquivo <code>.env</code> existe na raiz do projeto</li>
+                <li>Verifique se tem as linhas:<br>
+                    <code>GOOGLE_CLIENT_ID=seu-id-aqui<br>
+                    GOOGLE_CLIENT_SECRET=seu-secret-aqui</code>
+                </li>
+                <li>Reinicie o servidor Django</li>
+                <li>Se não funcionar, adicione direto no <code>settings.py</code>:<br>
+                    <code>GOOGLE_CLIENT_ID = 'seu-id-aqui'</code>
+                </li>
+            </ol>
+            <p><a href="/">← Voltar</a></p>
+        """, status=500)
+    
     redirect_uri = request.build_absolute_uri('/auth/google/callback/')
     
     scopes = [
