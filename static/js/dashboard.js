@@ -499,4 +499,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Inicializar ao carregar página
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', init); m
